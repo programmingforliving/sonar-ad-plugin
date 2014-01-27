@@ -1,1 +1,19 @@
-target/
+git-ls-files --others --exclude-from=.git/info/exclude
+/build
+/bin
+/.development/
+/.fbprefs
+/target
+.classpath
+.project
+.settings
+.metadata
+.mymetadata
+.deployment
+.externalToolBuilders
+.checkstyle
+.pmd
+.pmdruleset
+pom.xml.versionsBackup
+maven-eclipse.xml
+
