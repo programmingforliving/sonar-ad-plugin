@@ -49,7 +49,6 @@ public class ContextUtil {
         for(ADServerEntry provider : adSettings.getProviderList()) {
             env.put(Constants.PROVIDER_URL, provider.getUrl());
             try {
-            	LOG.trace("AD Connect props: {}", env);
 				ldapCtx = new InitialLdapContext(env, null);
 				LOG.trace("User succesfully bound to AD {}", ldapCtx);
 				break;
