@@ -19,32 +19,30 @@
  */
 package org.pfl.sonar.plugins.ad;
 
-import static org.junit.Assert.*;
+import java.util.Collection;
 
-import javax.servlet.http.HttpServletRequest;
-
-import org.junit.Test;
-import org.mockito.Mockito;
-import org.sonar.api.config.Settings;
-import org.sonar.api.security.Authenticator;
-import org.sonar.api.security.Authenticator.Context;
+import org.sonar.api.security.ExternalGroupsProvider;
 
 /**
- * @author Jiji Sasidharan
+ * Retrieve the groups for a given user.
  */
-public class ADAuthenticatorTest {
+public class ADGroupsProvider extends ExternalGroupsProvider {
 
-	
-	@Test
-	public void testDoAuthenticate() {
-		Settings settings = new Settings();
-		ADSettings adSettings = new ADSettings(settings);
-		ADSecurityRealm adSecurityRealm = new ADSecurityRealm(adSettings);
-		adSecurityRealm.init();
-		
-		Authenticator authenticator = adSecurityRealm.doGetAuthenticator();
-		
-		assertNotNull(authenticator);
-		assertEquals(authenticator.getClass(), ADAuthenticator.class);
+	/**
+	 * ADGroupsProvider
+	 * 
+	 * @param adSettings  The AD settings
+	 */
+	public ADGroupsProvider(ADSettings adSettings) {
+	}
+
+	/**
+	 * Returns the groups associated with the user.
+	 * 
+	 * @username The user name.
+	 */
+	@Override
+	public Collection<String> doGetGroups(String username) {
+		return null;
 	}
 }

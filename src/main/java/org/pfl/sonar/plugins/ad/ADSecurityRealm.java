@@ -78,7 +78,7 @@ public class ADSecurityRealm extends SecurityRealm {
      *         if not supported
      */
     public ExternalUsersProvider getUsersProvider() {
-        return null;
+        return new ADUsersProvider(adSettings);
     }
 
     /**
@@ -88,6 +88,6 @@ public class ADSecurityRealm extends SecurityRealm {
      *         if not supported
      */
     public ExternalGroupsProvider getGroupsProvider() {
-        return null;
+        return new ADGroupsProvider(adSettings);
     }
 }
