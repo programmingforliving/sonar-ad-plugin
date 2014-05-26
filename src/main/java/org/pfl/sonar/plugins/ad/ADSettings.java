@@ -55,14 +55,14 @@ public class ADSettings implements ServerExtension {
      * @param settings
      */
     public ADSettings(Settings settings) {
-    	// We may use settings in future. :)
+        // We may use settings in future. :)
     }
     
     /**
      * Load all the settings
      */
     public void load() {
-    	doAutoDiscovery();
+        doAutoDiscovery();
     }
     
     /**
@@ -126,12 +126,12 @@ public class ADSettings implements ServerExtension {
                 
                 String host = srvRecordTokens[3];
                 if (host.endsWith(".")) {
-                	host = host.substring(0, host.length() - 1);
+                    host = host.substring(0, host.length() - 1);
                 }
                 ADServerEntry adServer = new ADServerEntry(Integer.valueOf(srvRecordTokens[0]), 
-                		Integer.valueOf(srvRecordTokens[1]), 
-                		host, 
-                		Integer.valueOf(srvRecordTokens[2]));
+                        Integer.valueOf(srvRecordTokens[1]), 
+                        host, 
+                        Integer.valueOf(srvRecordTokens[2]));
                 providerList.add(adServer);
             }
             setProviderList(providerList);

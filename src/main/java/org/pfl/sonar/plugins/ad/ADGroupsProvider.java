@@ -25,24 +25,26 @@ import org.sonar.api.security.ExternalGroupsProvider;
 
 /**
  * Retrieve the groups for a given user.
+ * 
+ * @author Jiji_Sasidharan
  */
 public class ADGroupsProvider extends ExternalGroupsProvider {
 
-	/**
-	 * ADGroupsProvider
-	 * 
-	 * @param adSettings  The AD settings
-	 */
-	public ADGroupsProvider(ADSettings adSettings) {
-	}
+    /**
+     * ADGroupsProvider
+     * 
+     * @param adSettings  The AD settings
+     */
+    public ADGroupsProvider(ADSettings adSettings) {
+    }
 
-	/**
-	 * Returns the groups associated with the user.
-	 * 
-	 * @username The user name.
-	 */
-	@Override
-	public Collection<String> doGetGroups(String username) {
-		return null;
-	}
+    /**
+     * Returns the groups associated with the user.
+     * 
+     * @username The user name.
+     */
+    @Override
+    public Collection<String> doGetGroups(String username) {
+        return null;
+    }
 }

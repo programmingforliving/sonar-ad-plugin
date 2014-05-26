@@ -36,41 +36,40 @@ public class ContextUtil {
 
     private static final Logger LOG = LoggerFactory.getLogger(ContextUtil.class);
 
-	public static DirContext open(ADSettings adSettings, String userName,
-			String password) {
-		String usrPrincipal = userName + "@" + adSettings.getDnsDomain();
-		Properties env = new Properties();
-		env.put(Constants.FACTORY_INITIAL, Constants.LDAP_CTX_FACTORY);
-		env.put(Constants.SECURITY_AUTHENTICATION, Constants.SECURITY_AUTHENTICATION_SIMPLE);
-		env.put(Constants.SECURITY_PRINCIPAL, usrPrincipal);
-		env.put(Constants.SECURITY_CREDENTIALS, password);
-		env.put(Constants.REFERRAL, Constants.REFERRAL_FOLLOW);
+    public static DirContext open(ADSettings adSettings, String userName, String password) {
+        String usrPrincipal = userName + "@" + adSettings.getDnsDomain();
+        Properties env = new Properties();
+        env.put(Constants.FACTORY_INITIAL, Constants.LDAP_CTX_FACTORY);
+        env.put(Constants.SECURITY_AUTHENTICATION, Constants.SECURITY_AUTHENTICATION_SIMPLE);
+        env.put(Constants.SECURITY_PRINCIPAL, usrPrincipal);
+        env.put(Constants.SECURITY_CREDENTIALS, password);
+        env.put(Constants.REFERRAL, Constants.REFERRAL_FOLLOW);
         DirContext ldapCtx = null;
         for(ADServerEntry provider : adSettings.getProviderList()) {
             env.put(Constants.PROVIDER_URL, provider.getUrl());
             try {
-				ldapCtx = new InitialLdapContext(env, null);
-				LOG.trace("User succesfully bound to AD {}", ldapCtx);
-				break;
-			} catch (Exception e) {
-				LOG.warn("AD bind failed for {}. Error: {}", provider, e.getMessage());
-				LOG.trace("AD bind failed", e);
-			}
+                ldapCtx = new InitialLdapContext(env, null);
+                LOG.trace("User succesfully bound to AD {}", ldapCtx);
+                break;
+            } catch (Exception e) {
+                LOG.warn("AD bind failed for {}. Error: {}", provider, e.getMessage());
+                LOG.trace("AD bind failed", e);
+            }
         }
         return ldapCtx;
-	}
+    }
 
-	/**
-	 * Cose an Ldap directory context.
-	 * @param dirCtx
-	 */
-	public static void close(DirContext dirCtx) {
-		try {
-			if (dirCtx != null)
-				dirCtx.close();
-		} catch (Exception e) {
-			// ignore the exception
-			LOG.warn("Error while closing the context", e);
-		}
-	}
+    /**
+     * Cose an Ldap directory context.
+     * @param dirCtx
+     */
+    public static void close(DirContext dirCtx) {
+        try {
+            if (dirCtx != null)
+                dirCtx.close();
+        } catch (Exception e) {
+            // ignore the exception
+            LOG.warn("Error while closing the context", e);
+        }
+    }
 }
