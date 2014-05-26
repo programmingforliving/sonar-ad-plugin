@@ -28,4 +28,5 @@ Future Enhancements
 
 History
 -------
+*  0.2  Changes to [bypass AD for Sonar default user 'admin'](https://github.com/programmingforliving/sonar-ad-plugin/issues/1) - Credits to [Frieder Bluemle](https://github.com/friederbluemle)
 *  0.1  Initial version
