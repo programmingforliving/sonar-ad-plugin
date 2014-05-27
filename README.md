@@ -11,14 +11,12 @@ Features
 
 Installation 
 ------------ 
-1. Drop the plugin **sonar-ad-plugin-0.1.jar** to Sonar plugin directory (**&lt;Sonarqube Home&gt;\extensions\plugins**).
-2. Add the following to sonar config (**&lt;Sonarqube Home&gt;\conf\sonar.properties**)
+1. Drop the plugin **sonar-ad-plugin** jar to Sonar plugin directory (**&lt;Sonarqube Home&gt;\extensions\plugins**).
+2. Add the following to sonar config (**&lt;Sonarqube Home&gt;\conf\sonar.properties**) & Restart Sonar
 ```properties
-sonar.security.realm: AD
-sonar.authenticator.createUsers: true  
+	sonar.security.realm: AD
+	sonar.authenticator.createUsers: true  
 ```
-
-3. Restart Sonar
 
 
 Future Enhancements
