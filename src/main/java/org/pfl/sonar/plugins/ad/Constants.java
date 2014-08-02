@@ -38,4 +38,6 @@ public interface Constants {
     public String LDAP_CTX_FACTORY               = "com.sun.jndi.ldap.LdapCtxFactory";
     public String SECURITY_AUTHENTICATION_SIMPLE = "simple";
     public String REFERRAL_FOLLOW                = "follow";
+    
+    public String CONFIG_OVERRIDE_AD_DOMAIN = "sonar.ad.domain";
 }
