@@ -35,6 +35,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.sonar.api.ServerExtension;
 import org.sonar.api.config.Settings;
+import org.sonar.api.Properties;
+import org.sonar.api.Property;
+
 
 /**
  * ADSettings - Setting for Active Directory.
@@ -48,21 +51,31 @@ public class ADSettings implements ServerExtension {
 
     private String dnsDomain;
     private String dnsDomainDN;
+    private final String adDomainName;
     private Set<ADServerEntry> providerList;
     
     /**
      * Constructor
      * @param settings
      */
+    @Properties(
+        @Property(key=Constants.CONFIG_OVERRIDE_AD_DOMAIN, name="AD domain to search for", defaultValue="")
+    )
     public ADSettings(Settings settings) {
-        // We may use settings in future. :)
+        adDomainName = settings.getString(Constants.CONFIG_OVERRIDE_AD_DOMAIN);
     }
     
     /**
      * Load all the settings
      */
     public void load() {
-        doAutoDiscovery();
+        String adDomainName = getAdDomainName();
+        Boolean isAutoDiscoveryNeeded = adDomainName.isEmpty();
+        if (isAutoDiscoveryNeeded) {
+            doAutoDiscovery();
+        } else {
+            doManualLoad(adDomainName);
+        }
     }
     
     /**
@@ -99,7 +112,7 @@ public class ADSettings implements ServerExtension {
             LOG.error("Failed to detect domain. Error: " + e.getMessage());
             throw new ADPluginException("Failed to detect the domain ", e);
         }
-        
+
         //construct domain DN
         StringBuilder domainDNBuilder = new StringBuilder();
         for (String dom : getDnsDomain().split("[.]")) {
@@ -112,6 +125,32 @@ public class ADSettings implements ServerExtension {
         LOG.info("AutoDiscovery completed successfully.");
     }
 
+    private void doManualLoad(String domainName) {
+        // uses setting from sonar.properties
+        Set<ADServerEntry> providerList = null;
+
+        try {
+            LOG.trace("Searching provider list for domain '{}'", domainName);
+            providerList = fetchProviderList(domainName);
+        } catch (Exception e) {
+            // ignore the exception for now.
+        }
+        
+        setDnsDomain(domainName);
+        setProviderList(providerList);
+    
+        //construct domain DN
+        StringBuilder domainDNBuilder = new StringBuilder();
+        for (String dom : getDnsDomain().split("[.]")) {
+            domainDNBuilder.append(",").append("DC=").append(dom);
+        }
+        setDnsDomainDN(domainDNBuilder.toString().substring(1));
+        LOG.debug("DNS Domain   : {}", getDnsDomain());
+        LOG.debug("DNS Domain DN: {}", getDnsDomainDN());
+        LOG.debug("Provider List: {}", getProviderList());
+        LOG.info("AutoDiscovery completed successfully.");
+    }
+    
     private Set<ADServerEntry> fetchProviderList(String domainName) {
         // find provider list.
         Set<ADServerEntry> providerList = new TreeSet<ADServerEntry>();
@@ -173,6 +212,10 @@ public class ADSettings implements ServerExtension {
      */
     private void setDnsDomainDN(String dnsDomainDN) {
         this.dnsDomainDN = dnsDomainDN;
+    }
+
+    public String getAdDomainName() {
+        return adDomainName;
     }
 
     /**
