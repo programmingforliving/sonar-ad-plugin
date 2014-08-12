@@ -38,7 +38,6 @@ public class ADSecurityRealmTest {
 		adSecurityRealm.init();
 		assertEquals(adSecurityRealm.getName(), Constants.SECURITY_REALM_NAME);
 		assertNotNull(adSettings.getDnsDomain());
-		assertNotNull(adSettings.getDnsDomainDN());
 		assertNotNull(adSettings.getProviderList());
 	}
 }
