@@ -26,6 +26,7 @@ Future Enhancements
 
 History
 -------
+*  0.3  Changes to [define AD Domain manually] (https://github.com/programmingforliving/sonar-ad-plugin/pull/2) - Credits to [Sergey Timanin](https://github.com/timanin)
 *  0.2  Changes to [bypass AD for Sonar default user 'admin'](https://github.com/programmingforliving/sonar-ad-plugin/issues/1) - Credits to [Frieder Bluemle](https://github.com/friederbluemle)
 *  0.1  Initial version
 
