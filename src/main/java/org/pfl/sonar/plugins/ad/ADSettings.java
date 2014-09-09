@@ -57,6 +57,7 @@ public class ADSettings implements ServerExtension {
     private static final Logger LOG = LoggerFactory.getLogger(ADSettings.class);
 
     private String dnsDomain;
+    private String dnsDomainDN;
     private Set<ADServerEntry> providerList;
     
     /**
@@ -114,7 +115,9 @@ public class ADSettings implements ServerExtension {
                 throw new ADPluginException("Failed to retrieve srv records for " + 
                 		(domainNotProvided ? hostName : adDomain));
             }
+        	
         	setDnsDomain(adDomain);
+        	setDnsDomainDN("DC=" + adDomain.replace(".", ",DC="));
             setProviderList(providerList);
         } catch (UnknownHostException e) {
             LOG.error("Failed to detect domain. Error: " + e.getMessage());
@@ -193,4 +196,20 @@ public class ADSettings implements ServerExtension {
     private void setProviderList(Set<ADServerEntry> providerList) {
         this.providerList = providerList;
     }
+
+	/**
+	 * Returns dnsDomainDN
+	 * @return the dnsDomainDN
+	 */
+	public String getDnsDomainDN() {
+		return dnsDomainDN;
+	}
+
+	/**
+	 * Set dnsDomainDN
+	 * @param dnsDomainDN the dnsDomainNS to set
+	 */
+	private void setDnsDomainDN(String dnsDomainDN) {
+		this.dnsDomainDN = dnsDomainDN;
+	}
 }

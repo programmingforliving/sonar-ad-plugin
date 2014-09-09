@@ -21,7 +21,11 @@ package org.pfl.sonar.plugins.ad;
 
 import java.util.Properties;
 
+import javax.naming.NamingEnumeration;
+import javax.naming.NamingException;
 import javax.naming.directory.DirContext;
+import javax.naming.directory.SearchControls;
+import javax.naming.directory.SearchResult;
 import javax.naming.ldap.InitialLdapContext;
 
 import org.slf4j.Logger;
@@ -35,6 +39,9 @@ import org.slf4j.LoggerFactory;
 public class ContextUtil {
 
     private static final Logger LOG = LoggerFactory.getLogger(ContextUtil.class);
+    
+    // A ThreadLocal instance to hold the logged in user details local to the thread.
+    private static final ThreadLocal<ADUser> LOGGED_IN_USER_HOLDER = new ThreadLocal<ADUser>();
 
     public static DirContext open(ADSettings adSettings, String userName, String password) {
         String usrPrincipal = userName + "@" + adSettings.getDnsDomain();
@@ -48,8 +55,24 @@ public class ContextUtil {
         for(ADServerEntry provider : adSettings.getProviderList()) {
             env.put(Constants.PROVIDER_URL, provider.getUrl());
             try {
+            	LOGGED_IN_USER_HOLDER.remove();
                 ldapCtx = new InitialLdapContext(env, null);
                 LOG.trace("User succesfully bound to AD {}", ldapCtx);
+                try {
+                	
+                	SearchControls sCtrl = new SearchControls();
+                	sCtrl.setSearchScope(SearchControls.SUBTREE_SCOPE);
+
+                	NamingEnumeration<SearchResult> answer = ldapCtx.search(adSettings.getDnsDomainDN(), 
+                			"(&(userPrincipalName=" + usrPrincipal + "))", sCtrl);
+                	
+                	ADUser user = new ADUser(userName);
+                	user.populate(answer);
+                	LOGGED_IN_USER_HOLDER.set(user);
+        		} catch (NamingException e) {
+                    LOG.warn("Failed to retrieve the attributes of {}. Error: {}", userName, e.getMessage());
+                    LOG.trace("Use search failed", e);
+        		}
                 break;
             } catch (Exception e) {
                 LOG.warn("AD bind failed for {}. Error: {}", provider, e.getMessage());
@@ -71,5 +94,13 @@ public class ContextUtil {
             // ignore the exception
             LOG.warn("Error while closing the context", e);
         }
+    }
+    
+    /**
+     * Retrieve the logged in user object from ThreadLocal and returns it.
+     * @return
+     */
+    public static ADUser getLoggedInUser() {
+        return LOGGED_IN_USER_HOLDER.get();
     }
 }

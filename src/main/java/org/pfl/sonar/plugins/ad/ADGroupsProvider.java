@@ -21,6 +21,8 @@ package org.pfl.sonar.plugins.ad;
 
 import java.util.Collection;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.sonar.api.security.ExternalGroupsProvider;
 
 /**
@@ -30,6 +32,8 @@ import org.sonar.api.security.ExternalGroupsProvider;
  */
 public class ADGroupsProvider extends ExternalGroupsProvider {
 
+	private static final Logger LOG = LoggerFactory.getLogger(ADGroupsProvider.class);
+	
     /**
      * ADGroupsProvider
      * 
@@ -45,6 +49,11 @@ public class ADGroupsProvider extends ExternalGroupsProvider {
      */
     @Override
     public Collection<String> doGetGroups(String username) {
+    	ADUser user = ContextUtil.getLoggedInUser();
+    	if (user != null && username.equals(user.getUserName())) {
+    		LOG.debug("{} belongs to groups: {}", username, user.getGroups());
+    		return user.getGroups();
+    	}
         return null;
     }
 }

@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.pfl</groupId>
 	<artifactId>sonar-ad-plugin</artifactId>
-	<version>0.3</version>
+	<version>0.4</version>
 	<packaging>jar</packaging>
 	<name>Sonar AD Plugin</name>
 	<description>Integrates Sonar with Active Directory.</description>
