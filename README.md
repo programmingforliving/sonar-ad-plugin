@@ -7,6 +7,7 @@ Features
 --------
 1. AD Configuration autodiscovery (zero configuration in Sonar)
 2. AD Authentication
+3. User groups retrieval
 
 
 Installation 
@@ -19,13 +20,9 @@ Installation
 ```
 
 
-Future Enhancements
--------------------
-1. Groups Retrieval from Active Directory
-
-
 History
 -------
+*  0.4  Changes to retrieve the groups of the logged in user
 *  0.3  Changes to [define AD Domain manually] (https://github.com/programmingforliving/sonar-ad-plugin/pull/2) - Credits to [Sergey Timanin](https://github.com/timanin)
 *  0.2  Changes to [bypass AD for Sonar default user 'admin'](https://github.com/programmingforliving/sonar-ad-plugin/issues/1) - Credits to [Frieder Bluemle](https://github.com/friederbluemle)
 *  0.1  Initial version
