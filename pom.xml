@@ -14,7 +14,8 @@
 	</licenses>
 	<properties>
 		<sonar.version>3.1</sonar.version>
-		<junit.version>4.10</junit.version>
+		<junit.version>4.4</junit.version>
+		<powermock.version>1.5.6</powermock.version>
 	</properties>
 	<dependencies>
 		<dependency>
@@ -43,7 +44,19 @@
 		<dependency>
 			<groupId>org.mockito</groupId>
 			<artifactId>mockito-all</artifactId>
-			<version>1.8.5</version>
+			<version>1.9.5</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.powermock</groupId>
+			<artifactId>powermock-module-junit4</artifactId>
+			<version>${powermock.version}</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.powermock</groupId>
+			<artifactId>powermock-api-mockito</artifactId>
+			<version>${powermock.version}</version>
 			<scope>test</scope>
 		</dependency>
 	</dependencies>
