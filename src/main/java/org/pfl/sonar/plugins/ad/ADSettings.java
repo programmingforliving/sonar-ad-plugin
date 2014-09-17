@@ -85,7 +85,7 @@ public class ADSettings implements ServerExtension {
      * this method take the FQN of the host and derive domain name and authentication server
      * list from it.
      */
-    private void doAutoDiscovery() {
+    protected void doAutoDiscovery() {
         try {
             Set<ADServerEntry> providerList = null;
             String hostName = null;
@@ -135,7 +135,7 @@ public class ADSettings implements ServerExtension {
      * @param domainName
      * @return
      */
-    private Set<ADServerEntry> fetchProviderList(String domainName) {
+    protected Set<ADServerEntry> fetchProviderList(String domainName) {
         // find provider list.
         Set<ADServerEntry> providerList = new TreeSet<ADServerEntry>();
         try {
