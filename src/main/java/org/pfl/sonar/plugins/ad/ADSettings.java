@@ -100,7 +100,9 @@ public class ADSettings implements ServerExtension {
 	                try {
 	                    LOG.trace("Searching provider list for domain '{}'", adDomain);
 	                    providerList = fetchProviderList(adDomain);
-	                    break;
+	                    if (providerList != null && providerList.size() > 0) {
+	                    	break;
+	                    }
 	                } catch (Exception e) {
 	                    LOG.warn("Coulnt find any providers for domain '{}", adDomain);
 	                }
