@@ -82,7 +82,9 @@ public class ADUser {
 		while (attrValues.hasMoreElements()) {
 			String attrValue = (String)attrValues.next();
 			LOG.debug("Processing {}", attrValue);
-			valueList.add(attrValue.substring(3, attrValue.indexOf(",")));
+			if (!attrValue.isEmpty()) {
+				valueList.add(attrValue.substring(3, attrValue.indexOf(",")));
+			}
 		}
 		return valueList;
 	}
