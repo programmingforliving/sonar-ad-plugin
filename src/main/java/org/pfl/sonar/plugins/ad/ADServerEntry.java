@@ -50,7 +50,11 @@ public class ADServerEntry implements Comparable<ADServerEntry> {
 	 */
 	public int compareTo(ADServerEntry o) {
 		if (this.priority == o.priority) {
-			return Integer.valueOf(o.weight).compareTo(this.weight);
+			if (this.weight == o.weight) {
+				return getUrl().compareTo(o.getUrl());
+			} else {
+				return Integer.valueOf(o.weight).compareTo(this.weight);
+			}
 		}
 		return Integer.valueOf(this.priority).compareTo(o.priority);
 	}
@@ -102,4 +106,15 @@ public class ADServerEntry implements Comparable<ADServerEntry> {
 		return "("+ priority +"-" + weight+ ")" + getUrl();
 	}
 
+	@Override
+	public boolean equals(Object obj) {
+		if (obj == null || obj.getClass() != getClass()) 
+			return false;
+		return toString().equals(obj.toString());
+	}
+	
+	@Override
+	public int hashCode() {
+		return toString().hashCode();
+	}
 }
