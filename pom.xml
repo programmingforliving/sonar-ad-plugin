@@ -65,6 +65,7 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-jar-plugin</artifactId>
+				<version>2.5</version>
 				<configuration>
 					<archive>
 						<addMavenDescriptor>false</addMavenDescriptor>
@@ -75,12 +76,12 @@
 							<Plugin-Class>org.pfl.sonar.plugins.ad.ADPlugin</Plugin-Class>
 							<Plugin-Description>${project.description}</Plugin-Description>
 							<Plugin-Developers>${user.name}</Plugin-Developers>
-							<Plugin-Homepage>https://github.com/jijisv/sonar-ad-plugin/wiki</Plugin-Homepage>
-							<Plugin-IssueTrackerUrl>https://github.com/jijisv/sonar-ad-plugin/issues</Plugin-IssueTrackerUrl>
+							<Plugin-Homepage>${project.url}</Plugin-Homepage>
+							<Plugin-IssueTrackerUrl>${project.issueManagement.url}</Plugin-IssueTrackerUrl>
 							<Plugin-License>GNU GPLv3</Plugin-License>
-							<Plugin-Organization></Plugin-Organization>
-							<Plugin-OrganizationUrl>http://programmingforliving.com</Plugin-OrganizationUrl>
-							<Plugin-SourcesUrl>https://github.com/jijisv/sonar-ad-plugin</Plugin-SourcesUrl>
+							<Plugin-Organization>${project.organization.name}</Plugin-Organization>
+							<Plugin-OrganizationUrl>${project.organization.url}</Plugin-OrganizationUrl>
+							<Plugin-SourcesUrl>${project.scm.url}</Plugin-SourcesUrl>
 							<Plugin-TermsConditionsUrl></Plugin-TermsConditionsUrl>
 							<Plugin-Version>${project.version}</Plugin-Version>
 							<Sonar-Version>${sonar.version}</Sonar-Version>
@@ -88,6 +89,35 @@
 					</archive>
 				</configuration>
 			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>3.1</version>
+				<configuration>
+					<source>1.6</source>
+					<target>1.6</target>
+				</configuration>
+			</plugin>
 		</plugins>
 	</build>
+	<url>https://github.com/jijisv/sonar-ad-plugin/wiki</url>
+	<inceptionYear>2013</inceptionYear>
+	<organization>
+		<name>Jiji Sasidharan</name>
+		<url>http://programmingforliving.com</url>
+	</organization>
+	<scm>
+		<tag>HEAD</tag>
+		<url>https://github.com/programmingforliving/sonar-ad-plugin</url>
+		<connection>scm:git:git@github.com:programmingforliving/sonar-ad-plugin.git</connection>
+		<developerConnection>scm:git:git@github.com:programmingforliving/sonar-ad-plugin.git</developerConnection>
+	</scm>
+	<issueManagement>
+		<url>https://github.com/programmingforliving/sonar-ad-plugin/issues</url>
+		<system>GitHub</system>
+	</issueManagement>
+	<ciManagement>
+		<url>https://codeship.io/projects/30504</url>
+		<system>Codeship</system>
+	</ciManagement>
 </project>
