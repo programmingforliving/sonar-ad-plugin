@@ -19,25 +19,70 @@
  */
 package org.pfl.sonar.plugins.ad;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
+import static org.mockito.Matchers.anyString;
+import static org.powermock.api.mockito.PowerMockito.doReturn;
+import static org.powermock.api.mockito.PowerMockito.spy;
+import static org.powermock.api.mockito.PowerMockito.whenNew;
+
+import java.util.Arrays;
+import java.util.TreeSet;
 
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.invocation.InvocationOnMock;
+import org.mockito.stubbing.Answer;
+import org.powermock.core.classloader.annotations.PrepareForTest;
+import org.powermock.modules.junit4.PowerMockRunner;
 import org.sonar.api.config.Settings;
 
 /**
  * Testcase for ADSecurityRealm
  * @author Jiji Sasidharan
  */
+@RunWith(PowerMockRunner.class)
+@PrepareForTest({ADSettings.class})
 public class ADSecurityRealmTest {
 	
+	private void setupMocks(final boolean hasProviders) throws Exception {
+		whenNew(ADSettings.class).withAnyArguments().thenAnswer(new Answer<ADSettings>() {
+			public ADSettings answer(InvocationOnMock invocation)
+					throws Throwable {
+				ADSettings adSettings = spy(new ADSettings((Settings) invocation.getArguments()[0]));
+				TreeSet<ADServerEntry> providers = null;
+				if (hasProviders) 
+					providers = new TreeSet<ADServerEntry>(Arrays.asList((new ADServerEntry(0, 1, "ldap.mycompany.com", 389))));
+				doReturn(providers).when(adSettings).fetchProviderList(anyString());
+				return adSettings;
+			}
+		});
+	}
+	
+	/**
+	 * Scenario
+	 * a) LDAP Providers are not available for authentication. 
+	 */
+	@Test(expected = ADPluginException.class)
+	public void testADSecurityRealmInitWithNoProviders() throws Exception {
+		setupMocks(false);
+		ADSecurityRealm realm = new ADSecurityRealm(new ADSettings(new Settings()));
+		realm.init();
+		fail("Failed to throw exception incase of no providers.");
+	}
+
+	/**
+	 * Scenario
+	 * a) LDAP Providers are available for authentication - happy path 
+	 */
 	@Test
-	public void testADSecurityRealmPos1() {
-		Settings settings = new Settings();
-		ADSettings adSettings = new ADSettings(settings);
-		ADSecurityRealm adSecurityRealm = new ADSecurityRealm(adSettings);
-		adSecurityRealm.init();
-		assertEquals(adSecurityRealm.getName(), Constants.SECURITY_REALM_NAME);
-		assertNotNull(adSettings.getDnsDomain());
-		assertNotNull(adSettings.getProviderList());
+	public void testADSecurityRealmInitWithProviders() throws Exception {
+		setupMocks(true);
+		ADSecurityRealm realm = new ADSecurityRealm(new ADSettings(new Settings()));
+		realm.init();
+		assertEquals("Wrong SecurityRealm Name", realm.getName(), Constants.SECURITY_REALM_NAME);
+		assertEquals("Wrong GroupsProvider implemenation returned", realm.getGroupsProvider().getClass(), ADGroupsProvider.class);
+		assertEquals("Wrong UsersProvider implemenation returned", realm.getUsersProvider().getClass(), ADUsersProvider.class);
+		assertEquals("Wrong SecurityRealm Name", realm.doGetAuthenticator().getClass(), ADAuthenticator.class);
 	}
 }
