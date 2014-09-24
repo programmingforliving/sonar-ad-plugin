@@ -26,10 +26,14 @@ import static org.powermock.api.mockito.PowerMockito.doReturn;
 import static org.powermock.api.mockito.PowerMockito.spy;
 import static org.powermock.api.mockito.PowerMockito.whenNew;
 
+import java.net.InetAddress;
 import java.util.Arrays;
 import java.util.TreeSet;
 
+import org.hamcrest.CoreMatchers;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
@@ -44,6 +48,9 @@ import org.sonar.api.config.Settings;
 @RunWith(PowerMockRunner.class)
 @PrepareForTest({ADSettings.class})
 public class ADSecurityRealmTest {
+	
+	@Rule
+	private ExpectedException thrown = ExpectedException.none(); 
 	
 	private void setupMocks(final boolean hasProviders) throws Exception {
 		whenNew(ADSettings.class).withAnyArguments().thenAnswer(new Answer<ADSettings>() {
@@ -63,9 +70,13 @@ public class ADSecurityRealmTest {
 	 * Scenario
 	 * a) LDAP Providers are not available for authentication. 
 	 */
-	@Test(expected = ADPluginException.class)
+	@Test
 	public void testADSecurityRealmInitWithNoProviders() throws Exception {
 		setupMocks(false);
+		
+		thrown.expect(ADPluginException.class);
+		thrown.expectMessage(CoreMatchers.startsWith("Failed to retrieve srv records for"));
+
 		ADSecurityRealm realm = new ADSecurityRealm(new ADSettings(new Settings()));
 		realm.init();
 		fail("Failed to throw exception incase of no providers.");
@@ -78,6 +89,13 @@ public class ADSecurityRealmTest {
 	@Test
 	public void testADSecurityRealmInitWithProviders() throws Exception {
 		setupMocks(true);
+		String hostName = "ailsonfire.53647650-25f9-0132-5601-76bec1757a7f_df3d214d406d"; InetAddress.getLocalHost().getCanonicalHostName();
+		if (hostName.indexOf(".") == -1) {
+			// if the host name doesn't return the FQN,
+			// then this test would throw exception
+			thrown.expect(ADPluginException.class);
+			thrown.expectMessage(CoreMatchers.startsWith("Failed to retrieve srv records for"));
+		}
 		ADSecurityRealm realm = new ADSecurityRealm(new ADSettings(new Settings()));
 		realm.init();
 		assertEquals("Wrong SecurityRealm Name", realm.getName(), Constants.SECURITY_REALM_NAME);

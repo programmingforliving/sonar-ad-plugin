@@ -40,7 +40,10 @@ import javax.naming.directory.Attribute;
 import javax.naming.directory.Attributes;
 import javax.naming.directory.InitialDirContext;
 
+import org.hamcrest.CoreMatchers;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
@@ -56,6 +59,9 @@ import org.sonar.api.config.Settings;
 @RunWith(PowerMockRunner.class)
 @PrepareForTest(ADSettings.class)
 public class ADSettingsTest {
+	
+	@Rule
+	private ExpectedException thrown = ExpectedException.none(); 
 	
 	/**
 	 * Setup necessary mock objects/stubs for InitialDirContext and the InitialDirContext.getAttributes.
@@ -110,10 +116,13 @@ public class ADSettingsTest {
 	 *   b) No srv records available for the domain.  
 	 * @throws Exception
 	 */
-	@Test (expected=ADPluginException.class)
+	@Test
 	public void testWithExternallyProvidedDomainWithNoProviders() throws Exception {
 		final String externallyProvidedDomain = "users.mycompany.com";
 		setupMocks(externallyProvidedDomain, null);
+		
+		thrown.expect(ADPluginException.class);
+		thrown.expectMessage(CoreMatchers.startsWith("Failed to retrieve srv records for"));
 		
 		Settings settings = new Settings();
 		settings.setProperty("sonar.ad.domain", externallyProvidedDomain);
@@ -179,7 +188,13 @@ public class ADSettingsTest {
 	 */
 	@Test 
 	public void testAutoDiscoveryWithProviders() throws Exception {
-		String hostName = InetAddress.getLocalHost().getCanonicalHostName();
+		String hostName = "ailsonfire53647650-25f9-0132-5601-76bec1757a7f_df3d214d406d"; InetAddress.getLocalHost().getCanonicalHostName();
+		if (hostName.indexOf(".") == -1) {
+			// if the host name doesn't return the FQN,
+			// then this test would throw exception
+			thrown.expect(ADPluginException.class);
+			thrown.expectMessage(CoreMatchers.startsWith("Failed to retrieve srv records for"));
+		}
 		String domainName = hostName.substring(hostName.indexOf('.') + 1);
 		String domainNameDN = "DC=" + domainName.replace(".", ",DC=");
 		setupMocks(domainName, Arrays.asList("0 1 389 ldap1.mycompany.com", "1 1 389 ldap2.mycompany.com"));
@@ -201,9 +216,13 @@ public class ADSettingsTest {
 	 *   b) No srv records available for the domain.  
 	 * @throws Exception
 	 */
-	@Test (expected=ADPluginException.class)
+	@Test
 	public void testAutoDiscoveryWithNoProviders() throws Exception {
 		setupMocks(null, null);
+
+		thrown.expect(ADPluginException.class);
+		thrown.expectMessage(CoreMatchers.startsWith("Failed to retrieve srv records for"));
+		
 		new ADSettings(new Settings()).load();
 		fail("ADPluginException is not thrown on the event of no providers ");
 	}
@@ -218,8 +237,18 @@ public class ADSettingsTest {
 	@Test 
 	public void testSubdomainAutoDiscoveryWithProviders() throws Exception {
 		String hostName = InetAddress.getLocalHost().getCanonicalHostName();
+		if (hostName.indexOf(".") == -1) {
+			// if the host name doesn't return the FQN,
+			// then this test would throw exception
+			thrown.expect(ADPluginException.class);
+			thrown.expectMessage(CoreMatchers.startsWith("Failed to retrieve srv records for"));
+		}
 		String domainName = hostName.substring(hostName.indexOf('.') + 1);
 		String domainNameDN = "DC=" + domainName.replace(".", ",DC=");
+		if (domainName.indexOf(".") == -1) {
+			thrown.expect(ADPluginException.class);
+			thrown.expectMessage(CoreMatchers.startsWith("Failed to retrieve srv records for"));
+		}
 		String subDomainName = domainName.substring(domainName.indexOf('.') + 1);
 		String subDomainNameDN = "DC=" + subDomainName.replace(".", ",DC=");
 		setupMocks(subDomainName, Arrays.asList("0 1 389 ldap1.mycompany.com", "1 1 389 ldap2.mycompany.com"));
