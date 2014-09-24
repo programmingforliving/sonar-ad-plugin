@@ -89,7 +89,7 @@ public class ADSecurityRealmTest {
 	@Test
 	public void testADSecurityRealmInitWithProviders() throws Exception {
 		setupMocks(true);
-		String hostName = "ailsonfire.53647650-25f9-0132-5601-76bec1757a7f_df3d214d406d"; InetAddress.getLocalHost().getCanonicalHostName();
+		String hostName = InetAddress.getLocalHost().getCanonicalHostName();
 		if (hostName.indexOf(".") == -1) {
 			// if the host name doesn't return the FQN,
 			// then this test would throw exception
