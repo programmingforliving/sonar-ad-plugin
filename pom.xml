@@ -3,10 +3,9 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.pfl</groupId>
 	<artifactId>sonar-ad-plugin</artifactId>
-	<version>0.4</version>
+	<version>0.5</version>
 	<packaging>jar</packaging>
 	<name>Sonar AD Plugin</name>
-	<description>Integrates Sonar with Active Directory.</description>
 	<licenses>
 		<license>
 			<name>GNU GPLv3</name>
@@ -120,4 +119,5 @@
 		<url>https://codeship.io/projects/30504</url>
 		<system>Codeship</system>
 	</ciManagement>
+	<description>This plugin integrate Sonar with Active Directory for authentication and authorization</description>
 </project>

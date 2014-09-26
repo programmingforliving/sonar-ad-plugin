@@ -1,6 +1,5 @@
 Sonar AD Plugin
 ===============
-
 It is a simple plugin to integrate Sonar with Active Directory for authentication.
 
 Features
@@ -9,19 +8,13 @@ Features
 2. AD Authentication
 3. User groups retrieval
 
-
-Installation 
------------- 
-1. Drop the plugin **sonar-ad-plugin** jar to Sonar plugin directory (**&lt;Sonarqube Home&gt;\extensions\plugins**).
-2. Add the following to sonar config (**&lt;Sonarqube Home&gt;\conf\sonar.properties**) & Restart Sonar
-```properties
-	sonar.security.realm: AD
-	sonar.authenticator.createUsers: true  
-```
-
+Configuration 
+-------------
+Please refer the [Sonar AD Plugin documentation](http://programmingforliving.github.io/sonar-ad-plugin/). 
 
 History
 -------
+*  0.5  Minor defect fixes, documentation moved to github pages
 *  0.4  Changes to retrieve the groups of the logged in user
 *  0.3  Changes to [define AD Domain manually] (https://github.com/programmingforliving/sonar-ad-plugin/pull/2) - Credits to [Sergey Timanin](https://github.com/timanin)
 *  0.2  Changes to [bypass AD for Sonar default user 'admin'](https://github.com/programmingforliving/sonar-ad-plugin/issues/1) - Credits to [Frieder Bluemle](https://github.com/friederbluemle)
