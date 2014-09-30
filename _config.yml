@@ -1,0 +1,20 @@
+# Site settings
+title: Active Directory Plugin
+email: jijisv@gmail.com
+description: "Documentation for Sonar Active Directory Plugin"
+baseurl: "" 
+url: "http://programmingforliving.com" 
+
+# Build settings
+markdown: kramdown
+highlighter: rouge
+
+pflurl: "http://programmingforliving.com"
+copyright: "Copyright 2014"
+
+defaults:
+  - 
+    scope:
+      path: ""
+    values:
+      layout: "page"
