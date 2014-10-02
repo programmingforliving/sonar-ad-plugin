@@ -2,7 +2,7 @@
 title: Active Directory Plugin
 email: jijisv@gmail.com
 description: "Documentation for Sonar Active Directory Plugin"
-baseurl: "http://programmingforliving.github.io/sonar-ad-plugin/" 
+baseurl: "http://programmingforliving.github.io/sonar-ad-plugin" 
 url: "http://programmingforliving.com" 
 
 # Build settings

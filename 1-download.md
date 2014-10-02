@@ -1,6 +1,6 @@
 ---
 title: Download
-permalink: download/
+permalink: /download/
 ---
 
 The latest stable version is release 0.4. You can download the plugin jar from the link below
