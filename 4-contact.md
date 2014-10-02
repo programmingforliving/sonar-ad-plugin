@@ -1,6 +1,6 @@
 ---
 title: Contact
-permalink: contact/
+permalink: /contact/
 ---
 
 -  [Plugin Source ](https://github.com/programmingforliving/sonar-ad-plugin)
