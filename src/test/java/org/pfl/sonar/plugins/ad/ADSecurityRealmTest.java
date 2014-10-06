@@ -23,7 +23,10 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 import static org.mockito.Matchers.anyString;
 import static org.powermock.api.mockito.PowerMockito.doReturn;
+import static org.powermock.api.mockito.PowerMockito.mock;
+import static org.powermock.api.mockito.PowerMockito.mockStatic;
 import static org.powermock.api.mockito.PowerMockito.spy;
+import static org.powermock.api.mockito.PowerMockito.when;
 import static org.powermock.api.mockito.PowerMockito.whenNew;
 
 import java.net.InetAddress;
@@ -46,13 +49,13 @@ import org.sonar.api.config.Settings;
  * @author Jiji Sasidharan
  */
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({ADSettings.class})
+@PrepareForTest({ADSettings.class, InetAddress.class})
 public class ADSecurityRealmTest {
 	
 	@Rule
 	private ExpectedException thrown = ExpectedException.none(); 
 	
-	private void setupMocks(final boolean hasProviders) throws Exception {
+	private void setupMocks(final boolean hasProviders, final boolean hostHasFQN) throws Exception {
 		whenNew(ADSettings.class).withAnyArguments().thenAnswer(new Answer<ADSettings>() {
 			public ADSettings answer(InvocationOnMock invocation)
 					throws Throwable {
@@ -64,6 +67,15 @@ public class ADSecurityRealmTest {
 				return adSettings;
 			}
 		});
+		
+		mockStatic(InetAddress.class);
+		InetAddress mockInetAddress = mock(InetAddress.class);
+		when(InetAddress.getLocalHost()).thenReturn(mockInetAddress);
+		if (hostHasFQN)
+			when(mockInetAddress.getCanonicalHostName()).thenReturn("mycomp.ad.mycompany.com");
+		else 
+			when(mockInetAddress.getCanonicalHostName()).thenReturn("mycomputer");
+			
 	}
 	
 	/**
@@ -72,7 +84,7 @@ public class ADSecurityRealmTest {
 	 */
 	@Test
 	public void testADSecurityRealmInitWithNoProviders() throws Exception {
-		setupMocks(false);
+		setupMocks(false, true);
 		
 		thrown.expect(ADPluginException.class);
 		thrown.expectMessage(CoreMatchers.startsWith("Failed to retrieve srv records for"));
@@ -88,19 +100,27 @@ public class ADSecurityRealmTest {
 	 */
 	@Test
 	public void testADSecurityRealmInitWithProviders() throws Exception {
-		setupMocks(true);
-		String hostName = InetAddress.getLocalHost().getCanonicalHostName();
-		if (hostName.indexOf(".") == -1) {
-			// if the host name doesn't return the FQN,
-			// then this test would throw exception
-			thrown.expect(ADPluginException.class);
-			thrown.expectMessage(CoreMatchers.startsWith("Failed to retrieve srv records for"));
-		}
+		setupMocks(true, true);
 		ADSecurityRealm realm = new ADSecurityRealm(new ADSettings(new Settings()));
 		realm.init();
 		assertEquals("Wrong SecurityRealm Name", realm.getName(), Constants.SECURITY_REALM_NAME);
 		assertEquals("Wrong GroupsProvider implemenation returned", realm.getGroupsProvider().getClass(), ADGroupsProvider.class);
 		assertEquals("Wrong UsersProvider implemenation returned", realm.getUsersProvider().getClass(), ADUsersProvider.class);
 		assertEquals("Wrong SecurityRealm Name", realm.doGetAuthenticator().getClass(), ADAuthenticator.class);
+	}
+
+	/**
+	 * Scenario
+	 * a) LDAP Providers are available for authentication - happy path 
+	 */
+	@Test
+	public void testADSecurityRealmInitWithMissingDomainInHostName() throws Exception {
+		setupMocks(true, false);
+		thrown.expect(ADPluginException.class);
+		thrown.expectMessage(CoreMatchers.startsWith("Failed to retrieve srv records for"));
+
+		ADSecurityRealm realm = new ADSecurityRealm(new ADSettings(new Settings()));
+		realm.init();
+		fail();
 	}
 }

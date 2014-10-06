@@ -27,6 +27,7 @@ import static org.mockito.AdditionalMatchers.aryEq;
 import static org.mockito.AdditionalMatchers.not;
 import static org.mockito.Matchers.startsWith;
 import static org.powermock.api.mockito.PowerMockito.mock;
+import static org.powermock.api.mockito.PowerMockito.mockStatic;
 import static org.powermock.api.mockito.PowerMockito.when;
 import static org.powermock.api.mockito.PowerMockito.whenNew;
 
@@ -57,7 +58,7 @@ import org.sonar.api.config.Settings;
  * @author Jiji Sasidharan
  */
 @RunWith(PowerMockRunner.class)
-@PrepareForTest(ADSettings.class)
+@PrepareForTest({ADSettings.class, InetAddress.class})
 public class ADSettingsTest {
 	
 	@Rule
@@ -108,6 +109,12 @@ public class ADSettingsTest {
 				}
 			});
 		}
+		
+		mockStatic(InetAddress.class);
+		InetAddress mockInetAddress = mock(InetAddress.class);
+		when(InetAddress.getLocalHost()).thenReturn(mockInetAddress);
+		when(mockInetAddress.getCanonicalHostName()).thenReturn("mycomp.users.mycompany.com");
+
 	}
 	
 	/**
@@ -188,13 +195,7 @@ public class ADSettingsTest {
 	 */
 	@Test 
 	public void testAutoDiscoveryWithProviders() throws Exception {
-		String hostName = InetAddress.getLocalHost().getCanonicalHostName();
-		if (hostName.indexOf(".") == -1) {
-			// if the host name doesn't return the FQN,
-			// then this test would throw exception
-			thrown.expect(ADPluginException.class);
-			thrown.expectMessage(CoreMatchers.startsWith("Failed to retrieve srv records for"));
-		}
+		String hostName = "mycomp.users.mycompany.com";
 		String domainName = hostName.substring(hostName.indexOf('.') + 1);
 		String domainNameDN = "DC=" + domainName.replace(".", ",DC=");
 		setupMocks(domainName, Arrays.asList("0 1 389 ldap1.mycompany.com", "1 1 389 ldap2.mycompany.com"));
@@ -236,19 +237,9 @@ public class ADSettingsTest {
 	 */
 	@Test 
 	public void testSubdomainAutoDiscoveryWithProviders() throws Exception {
-		String hostName = InetAddress.getLocalHost().getCanonicalHostName();
-		if (hostName.indexOf(".") == -1) {
-			// if the host name doesn't return the FQN,
-			// then this test would throw exception
-			thrown.expect(ADPluginException.class);
-			thrown.expectMessage(CoreMatchers.startsWith("Failed to retrieve srv records for"));
-		}
+		String hostName = "mycomp.users.mycompany.com";
 		String domainName = hostName.substring(hostName.indexOf('.') + 1);
 		String domainNameDN = "DC=" + domainName.replace(".", ",DC=");
-		if (domainName.indexOf(".") == -1) {
-			thrown.expect(ADPluginException.class);
-			thrown.expectMessage(CoreMatchers.startsWith("Failed to retrieve srv records for"));
-		}
 		String subDomainName = domainName.substring(domainName.indexOf('.') + 1);
 		String subDomainNameDN = "DC=" + subDomainName.replace(".", ",DC=");
 		setupMocks(subDomainName, Arrays.asList("0 1 389 ldap1.mycompany.com", "1 1 389 ldap2.mycompany.com"));
