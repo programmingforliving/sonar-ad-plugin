@@ -4,6 +4,7 @@ email: jijisv@gmail.com
 description: "Documentation for Sonar Active Directory Plugin"
 baseurl: "http://programmingforliving.github.io/sonar-ad-plugin" 
 url: "http://programmingforliving.com" 
+exclude: ['.c9', '.git', '.sass-cache']
 
 # Build settings
 markdown: kramdown
