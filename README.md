@@ -1,5 +1,7 @@
 Sonar AD Plugin
 ===============
+
+[![Join the chat at https://gitter.im/programmingforliving/sonar-ad-plugin](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/programmingforliving/sonar-ad-plugin?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 It is a simple plugin to integrate Sonar with Active Directory for authentication.
 
 Features
