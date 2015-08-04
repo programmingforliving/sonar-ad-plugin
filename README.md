@@ -20,4 +20,5 @@ History
 *  0.2  Changes to [bypass AD for Sonar default user 'admin'](https://github.com/programmingforliving/sonar-ad-plugin/issues/1) - Credits to [Frieder Bluemle](https://github.com/friederbluemle)
 *  0.1  Initial version
 
-[ ![Codeship Status for programmingforliving/sonar-ad-plugin](https://codeship.io/projects/4126c120-03a3-0132-04bb-1a827ae27d2a/status)](https://codeship.io/projects/30504)
+[ ![Codeship Status for programmingforliving/sonar-ad-plugin](https://codeship.io/projects/4126c120-03a3-0132-04bb-1a827ae27d2a/status)](https://codeship.io/projects/30504)  
+[![Join the chat at https://gitter.im/programmingforliving/sonar-ad-plugin](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/programmingforliving/sonar-ad-plugin?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
