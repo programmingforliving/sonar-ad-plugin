@@ -29,13 +29,13 @@ import org.slf4j.LoggerFactory;
 
 /**
  * This class provides utility methods to open and close LDAP Context.
- * 
+ *
  * @author Jiji Sasidharan
  */
 public class ContextUtil {
 
     private static final Logger LOG = LoggerFactory.getLogger(ContextUtil.class);
-    
+
     // A ThreadLocal instance to hold the logged in user details local to the thread.
     private static final ThreadLocal<ADUser> LOGGED_IN_USER_HOLDER = new ThreadLocal<ADUser>();
 
@@ -51,24 +51,23 @@ public class ContextUtil {
         for(ADServerEntry provider : adSettings.getProviderList()) {
             env.put(Constants.PROVIDER_URL, provider.getUrl());
             try {
-            	LOGGED_IN_USER_HOLDER.remove();
+                LOGGED_IN_USER_HOLDER.remove();
                 ldapCtx = new InitialLdapContext(env, null);
                 LOG.trace("User succesfully bound to AD {}", ldapCtx);
                 try {
-                	
-                	SearchControls sCtrl = new SearchControls();
-                	sCtrl.setSearchScope(SearchControls.SUBTREE_SCOPE);
+                    SearchControls sCtrl = new SearchControls();
+                    sCtrl.setSearchScope(SearchControls.SUBTREE_SCOPE);
 
-                	NamingEnumeration<SearchResult> answer = ldapCtx.search(adSettings.getDnsDomainDN(), 
-                			"(&(userPrincipalName=" + usrPrincipal + "))", sCtrl);
-                	
-                	ADUser user = new ADUser(userName);
-                	user.populate(answer);
-                	LOGGED_IN_USER_HOLDER.set(user);
-        		} catch (NamingException e) {
+                    NamingEnumeration<SearchResult> answer = ldapCtx.search(adSettings.getDnsDomainDN(),
+                            "(&(userPrincipalName=" + usrPrincipal + "))", sCtrl);
+
+                    ADUser user = new ADUser(userName);
+                    user.populate(answer);
+                    LOGGED_IN_USER_HOLDER.set(user);
+                } catch (NamingException e) {
                     LOG.warn("Failed to retrieve the attributes of {}. Error: {}", userName, e.getMessage());
                     LOG.trace("Use search failed", e);
-        		}
+                }
                 break;
             } catch (Exception e) {
                 LOG.warn("AD bind failed for {}. Error: {}", provider, e.getMessage());
@@ -91,7 +90,7 @@ public class ContextUtil {
             LOG.warn("Error while closing the context", e);
         }
     }
-    
+
     /**
      * Retrieve the logged in user object from ThreadLocal and returns it.
      * @return

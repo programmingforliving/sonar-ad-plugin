@@ -23,7 +23,7 @@ import org.sonar.api.security.Authenticator;
 
 /**
  * Authenticator for Sonar AD Plugin.
- * 
+ *
  * @author Jiji_Sasidharan
  */
 public class ADAuthenticator extends Authenticator {
@@ -31,7 +31,7 @@ public class ADAuthenticator extends Authenticator {
     private static final Logger LOG = LoggerFactory.getLogger(ADAuthenticator.class);
 
     private ADSettings adSettings;
-    
+
     /**
      * Constructor
      * @param adSettings Active Directory settings
@@ -39,10 +39,10 @@ public class ADAuthenticator extends Authenticator {
     public ADAuthenticator(ADSettings adSettings) {
         this.adSettings = adSettings;
     }
-    
+
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.sonar.api.security.Authenticator#doAuthenticate(org.sonar.api.security.Authenticator.Context)
      */
     @Override

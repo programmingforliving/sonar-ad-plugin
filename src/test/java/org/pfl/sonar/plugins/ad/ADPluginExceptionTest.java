@@ -25,63 +25,63 @@ import org.junit.Test;
  */
 public class ADPluginExceptionTest {
 
-	/**
-	 * Scenario:
-	 *   a) Exception is thrown with error message
-	 */
-	@Test
-	public void testADPluginExceptionWithMessage() {
-		String message = "some error message";
-		ADPluginException exception = new ADPluginException(message);
-		assertNotNull("Exception message is not set", exception.getMessage());
-		assertEquals("Exception message is incorrect", exception.getMessage(), message);
-	}
+    /**
+     * Scenario:
+     *   a) Exception is thrown with error message
+     */
+    @Test
+    public void testADPluginExceptionWithMessage() {
+        String message = "some error message";
+        ADPluginException exception = new ADPluginException(message);
+        assertNotNull("Exception message is not set", exception.getMessage());
+        assertEquals("Exception message is incorrect", exception.getMessage(), message);
+    }
 
-	/**
-	 * Scenario:
-	 *  a) Exception is thrown with error message and another exception
-	 */
-	@Test
-	public void testADPluginExceptionWithMessageAndCauseException() {
-		String message = "some error message";
-		Throwable t = new Throwable("rootcause");
-		ADPluginException exception = new ADPluginException(message, t);
-		assertNotNull("Exception message is missing", exception.getMessage());
-		assertEquals("Exception message is incorrect", exception.getMessage(), message);
-		assertNotNull("Chained exception is missing", exception.getCause());
-	}
+    /**
+     * Scenario:
+     *  a) Exception is thrown with error message and another exception
+     */
+    @Test
+    public void testADPluginExceptionWithMessageAndCauseException() {
+        String message = "some error message";
+        Throwable t = new Throwable("rootcause");
+        ADPluginException exception = new ADPluginException(message, t);
+        assertNotNull("Exception message is missing", exception.getMessage());
+        assertEquals("Exception message is incorrect", exception.getMessage(), message);
+        assertNotNull("Chained exception is missing", exception.getCause());
+    }
 
-	/**
-	 * Scenario:
-	 *   a) Exception is thrown with no message (null 
-	 */
-	@Test
-	public void testADPluginExceptionWithNullMessage() {
-		ADPluginException exception = new ADPluginException(null);
-		assertNull("Exception message is not set", exception.getMessage());
-	}
+    /**
+     * Scenario:
+     *   a) Exception is thrown with no message (null)
+     */
+    @Test
+    public void testADPluginExceptionWithNullMessage() {
+        ADPluginException exception = new ADPluginException(null);
+        assertNull("Exception message is not set", exception.getMessage());
+    }
 
-	/**
-	 * Scenario:
-	 *  a) Exception is thrown with error message and null exception
-	 */
-	@Test
-	public void testADPluginExceptionWithMessageAndNullCauseException() {
-		String message = "some error message";
-		ADPluginException exception = new ADPluginException(message, null);
-		assertNotNull("Exception message is missing", exception.getMessage());
-		assertEquals("Exception message is incorrect", exception.getMessage(), message);
-		assertNull("Chained exception is missing", exception.getCause());
-	}
+    /**
+     * Scenario:
+     *  a) Exception is thrown with error message and null exception
+     */
+    @Test
+    public void testADPluginExceptionWithMessageAndNullCauseException() {
+        String message = "some error message";
+        ADPluginException exception = new ADPluginException(message, null);
+        assertNotNull("Exception message is missing", exception.getMessage());
+        assertEquals("Exception message is incorrect", exception.getMessage(), message);
+        assertNull("Chained exception is missing", exception.getCause());
+    }
 
-	/**
-	 * Scenario:
-	 *  a) Exception is thrown with Null error message and null exception
-	 */
-	@Test
-	public void testADPluginExceptionWithNullMessageAndNullCauseException() {
-		ADPluginException exception = new ADPluginException(null, null);
-		assertNull("Exception message is missing", exception.getMessage());
-		assertNull("Chained exception is missing", exception.getCause());
-	}
+    /**
+     * Scenario:
+     *  a) Exception is thrown with Null error message and null exception
+     */
+    @Test
+    public void testADPluginExceptionWithNullMessageAndNullCauseException() {
+        ADPluginException exception = new ADPluginException(null, null);
+        assertNull("Exception message is missing", exception.getMessage());
+        assertNull("Chained exception is missing", exception.getCause());
+    }
 }

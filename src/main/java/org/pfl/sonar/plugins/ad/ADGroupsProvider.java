@@ -23,16 +23,16 @@ import org.sonar.api.security.ExternalGroupsProvider;
 
 /**
  * Retrieve the groups for a given user.
- * 
+ *
  * @author Jiji_Sasidharan
  */
 public class ADGroupsProvider extends ExternalGroupsProvider {
 
-	private static final Logger LOG = LoggerFactory.getLogger(ADGroupsProvider.class);
-	
+    private static final Logger LOG = LoggerFactory.getLogger(ADGroupsProvider.class);
+
     /**
      * ADGroupsProvider
-     * 
+     *
      * @param adSettings  The AD settings
      */
     public ADGroupsProvider(ADSettings adSettings) {
@@ -40,16 +40,16 @@ public class ADGroupsProvider extends ExternalGroupsProvider {
 
     /**
      * Returns the groups associated with the user.
-     * 
+     *
      * @username The user name.
      */
     @Override
     public Collection<String> doGetGroups(String username) {
-    	ADUser user = ContextUtil.getLoggedInUser();
-    	if (user != null && username.equals(user.getUserName())) {
-    		LOG.debug("{} belongs to groups: {}", username, user.getGroups());
-    		return user.getGroups();
-    	}
+        ADUser user = ContextUtil.getLoggedInUser();
+        if (user != null && username.equals(user.getUserName())) {
+            LOG.debug("{} belongs to groups: {}", username, user.getGroups());
+            return user.getGroups();
+        }
         return null;
     }
 }

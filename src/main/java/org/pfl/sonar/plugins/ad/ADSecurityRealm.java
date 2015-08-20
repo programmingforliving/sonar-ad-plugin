@@ -24,25 +24,25 @@ import org.sonar.api.security.SecurityRealm;
 
 /**
  * ADSecurityRealm - SecurityRealm implementation for Sonar AD Plugin.
- * 
+ *
  * @author Jiji_Sasidharan
  */
 public class ADSecurityRealm extends SecurityRealm {
 
     private static final Logger LOG = LoggerFactory.getLogger(ADSecurityRealm.class);
-    
+
     private ADSettings adSettings;
-    
+
     public ADSecurityRealm(ADSettings adSettings) {
         this.adSettings = adSettings;
     }
-    
+
     /**
      * Returns SecurityRealm name for Sonar AD Plugin.
-     * 
+     *
      * The Sonar AD Plugin should be configured in <code>sonar.properties</code>
      * with <code>sonar.security.realm: AD </code>
-     * 
+     *
      * @return SecurityRealm name
      * @see Constants#SECURITY_REALM_NAME
      */
@@ -60,7 +60,7 @@ public class ADSecurityRealm extends SecurityRealm {
 
     /**
      * Returns the active directory authenticator.
-     * 
+     *
      * @return {@link Authenticator} implementation associated with this realm
      */
     public Authenticator doGetAuthenticator() {
@@ -68,8 +68,8 @@ public class ADSecurityRealm extends SecurityRealm {
     }
 
     /**
-     * Return ExternalUsersProvider. 
-     * 
+     * Return ExternalUsersProvider.
+     *
      * @return {@link ExternalUsersProvider} associated with this realm, null
      *         if not supported
      */
@@ -78,8 +78,8 @@ public class ADSecurityRealm extends SecurityRealm {
     }
 
     /**
-     * Return ExternalGroupsProvider. 
-     * 
+     * Return ExternalGroupsProvider.
+     *
      * @return {@link ExternalGroupsProvider} associated with this realm, null
      *         if not supported
      */

@@ -24,8 +24,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * ADPlugin - Sonar Active Directory Plugin class 
- * 
+ * ADPlugin - Sonar Active Directory Plugin class.
+ *
  * @author Jiji_Sasidharan
  */
 @SuppressWarnings({"rawtypes", "unchecked"})
@@ -35,14 +35,14 @@ public class ADPlugin extends SonarPlugin {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.sonar.api.Plugin#getExtensions()
      */
     public List getExtensions() {
         List extensionList = new ArrayList();
         extensionList.add(ADSecurityRealm.class);
         extensionList.add(ADSettings.class);
-        LOG.trace("ExtensionList: " + extensionList);
+        LOG.trace("ExtensionList: {}", extensionList);
         return Collections.unmodifiableList(extensionList);
     }
 }

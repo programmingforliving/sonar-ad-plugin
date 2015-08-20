@@ -47,76 +47,75 @@ import org.sonar.api.config.Settings;
 @RunWith(PowerMockRunner.class)
 @PrepareForTest({ADSettings.class, InetAddress.class})
 public class ADSecurityRealmTest {
-	
-	@Rule
-	private ExpectedException thrown = ExpectedException.none(); 
-	
-	private void setupMocks(final boolean hasProviders, final boolean hostHasFQN) throws Exception {
-		whenNew(ADSettings.class).withAnyArguments().thenAnswer(new Answer<ADSettings>() {
-			public ADSettings answer(InvocationOnMock invocation)
-					throws Throwable {
-				ADSettings adSettings = spy(new ADSettings((Settings) invocation.getArguments()[0]));
-				TreeSet<ADServerEntry> providers = null;
-				if (hasProviders) 
-					providers = new TreeSet<ADServerEntry>(Arrays.asList((new ADServerEntry(0, 1, "ldap.mycompany.com", 389))));
-				doReturn(providers).when(adSettings).fetchProviderList(anyString());
-				return adSettings;
-			}
-		});
-		
-		mockStatic(InetAddress.class);
-		InetAddress mockInetAddress = mock(InetAddress.class);
-		when(InetAddress.getLocalHost()).thenReturn(mockInetAddress);
-		if (hostHasFQN)
-			when(mockInetAddress.getCanonicalHostName()).thenReturn("mycomp.ad.mycompany.com");
-		else 
-			when(mockInetAddress.getCanonicalHostName()).thenReturn("mycomputer");
-			
-	}
-	
-	/**
-	 * Scenario
-	 * a) LDAP Providers are not available for authentication. 
-	 */
-	@Test
-	public void testADSecurityRealmInitWithNoProviders() throws Exception {
-		setupMocks(false, true);
-		
-		thrown.expect(ADPluginException.class);
-		thrown.expectMessage(CoreMatchers.startsWith("Failed to retrieve srv records for"));
 
-		ADSecurityRealm realm = new ADSecurityRealm(new ADSettings(new Settings()));
-		realm.init();
-		fail("Failed to throw exception incase of no providers.");
-	}
+    @Rule
+    private ExpectedException thrown = ExpectedException.none();
 
-	/**
-	 * Scenario
-	 * a) LDAP Providers are available for authentication - happy path 
-	 */
-	@Test
-	public void testADSecurityRealmInitWithProviders() throws Exception {
-		setupMocks(true, true);
-		ADSecurityRealm realm = new ADSecurityRealm(new ADSettings(new Settings()));
-		realm.init();
-		assertEquals("Wrong SecurityRealm Name", realm.getName(), Constants.SECURITY_REALM_NAME);
-		assertEquals("Wrong GroupsProvider implemenation returned", realm.getGroupsProvider().getClass(), ADGroupsProvider.class);
-		assertEquals("Wrong UsersProvider implemenation returned", realm.getUsersProvider().getClass(), ADUsersProvider.class);
-		assertEquals("Wrong SecurityRealm Name", realm.doGetAuthenticator().getClass(), ADAuthenticator.class);
-	}
+    private void setupMocks(final boolean hasProviders, final boolean hostHasFQN) throws Exception {
+        whenNew(ADSettings.class).withAnyArguments().thenAnswer(new Answer<ADSettings>() {
+            public ADSettings answer(InvocationOnMock invocation)
+                    throws Throwable {
+                ADSettings adSettings = spy(new ADSettings((Settings) invocation.getArguments()[0]));
+                TreeSet<ADServerEntry> providers = null;
+                if (hasProviders)
+                    providers = new TreeSet<ADServerEntry>(Arrays.asList((new ADServerEntry(0, 1, "ldap.mycompany.com", 389))));
+                doReturn(providers).when(adSettings).fetchProviderList(anyString());
+                return adSettings;
+            }
+        });
 
-	/**
-	 * Scenario
-	 * a) LDAP Providers are available for authentication - happy path 
-	 */
-	@Test
-	public void testADSecurityRealmInitWithMissingDomainInHostName() throws Exception {
-		setupMocks(true, false);
-		thrown.expect(ADPluginException.class);
-		thrown.expectMessage(CoreMatchers.startsWith("Failed to retrieve srv records for"));
+        mockStatic(InetAddress.class);
+        InetAddress mockInetAddress = mock(InetAddress.class);
+        when(InetAddress.getLocalHost()).thenReturn(mockInetAddress);
+        if (hostHasFQN)
+            when(mockInetAddress.getCanonicalHostName()).thenReturn("mycomp.ad.mycompany.com");
+        else
+            when(mockInetAddress.getCanonicalHostName()).thenReturn("mycomputer");
+    }
 
-		ADSecurityRealm realm = new ADSecurityRealm(new ADSettings(new Settings()));
-		realm.init();
-		fail();
-	}
+    /**
+     * Scenario
+     *   LDAP Providers are not available for authentication.
+     */
+    @Test
+    public void testADSecurityRealmInitWithNoProviders() throws Exception {
+        setupMocks(false, true);
+
+        thrown.expect(ADPluginException.class);
+        thrown.expectMessage(CoreMatchers.startsWith("Failed to retrieve srv records for"));
+
+        ADSecurityRealm realm = new ADSecurityRealm(new ADSettings(new Settings()));
+        realm.init();
+        fail("Failed to throw exception incase of no providers.");
+    }
+
+    /**
+     * Scenario
+     *   LDAP Providers are available for authentication - happy path!
+     */
+    @Test
+    public void testADSecurityRealmInitWithProviders() throws Exception {
+        setupMocks(true, true);
+        ADSecurityRealm realm = new ADSecurityRealm(new ADSettings(new Settings()));
+        realm.init();
+        assertEquals("Wrong SecurityRealm Name", realm.getName(), Constants.SECURITY_REALM_NAME);
+        assertEquals("Wrong GroupsProvider implemenation returned", realm.getGroupsProvider().getClass(), ADGroupsProvider.class);
+        assertEquals("Wrong UsersProvider implemenation returned", realm.getUsersProvider().getClass(), ADUsersProvider.class);
+        assertEquals("Wrong SecurityRealm Name", realm.doGetAuthenticator().getClass(), ADAuthenticator.class);
+    }
+
+    /**
+     * Scenario
+     *   LDAP Providers are available for authentication - happy path
+     */
+    @Test
+    public void testADSecurityRealmInitWithMissingDomainInHostName() throws Exception {
+        setupMocks(true, false);
+        thrown.expect(ADPluginException.class);
+        thrown.expectMessage(CoreMatchers.startsWith("Failed to retrieve srv records for"));
+
+        ADSecurityRealm realm = new ADSecurityRealm(new ADSettings(new Settings()));
+        realm.init();
+        fail();
+    }
 }
