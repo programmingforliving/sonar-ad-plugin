@@ -29,76 +29,76 @@ import org.slf4j.LoggerFactory;
 
 /**
  * Active Directory User object.
- * 
+ *
  * @author Jiji Sasidharan
  */
 @SuppressWarnings("rawtypes")
 public class ADUser {
 
-	private static final Logger LOG = LoggerFactory.getLogger(ADUser.class);
+    private static final Logger LOG = LoggerFactory.getLogger(ADUser.class);
 
-	private String userName;
-	private Collection<String> groups;
-	
-	public ADUser(String userName) {
-		this.userName = userName; 
-	}
-	
-	/**
-	 * Populate the user attributes from AD SearchResult
-	 * @param userAttributeEnumeration
-	 * @throws NamingException
-	 */
-	public void populate(NamingEnumeration<SearchResult> userAttributeEnumeration) 
-			throws NamingException {
-    	while (userAttributeEnumeration.hasMore()) {
-    		SearchResult result = userAttributeEnumeration.next();
-			NamingEnumeration attrs = result.getAttributes().getAll();
-    		while (attrs.hasMore()) {
-    			Attribute attr = (Attribute)attrs.next();
-    			if ("memberOf".equals(attr.getID())) {
-    				LOG.debug("{}", attr);
-    				groups = getAtrributeValues(attr.getAll());
-    			}
-    		}
-    	}
-	}
-	
-	/**
-	 * Extract attribute values. 
-	 * 
-	 * Note: This method extract the value of CN=
-	 *  
-	 * @param attrValues
-	 * @return
-	 * @throws NamingException
-	 */
-	private Collection<String> getAtrributeValues(NamingEnumeration attrValues) throws NamingException {
-		List<String> valueList = new ArrayList<String>();
-		while (attrValues.hasMoreElements()) {
-			String attrValue = (String)attrValues.next();
-			LOG.debug("Processing {}", attrValue);
-			if (!attrValue.isEmpty()) {
-				valueList.add(attrValue.substring(3, attrValue.indexOf(",")));
-			}
-		}
-		return valueList;
-	}
+    private String userName;
+    private Collection<String> groups;
 
-	/**
-	 * Returns userName
-	 * @return the userName
-	 */
-	public String getUserName() {
-		return userName;
-	}
+    public ADUser(String userName) {
+        this.userName = userName;
+    }
 
-	/**
-	 * Returns groups
-	 * @return the groups
-	 */
-	public Collection<String> getGroups() {
-		return groups;
-	}
-	
+    /**
+     * Populate the user attributes from AD SearchResult
+     * @param userAttributeEnumeration
+     * @throws NamingException
+     */
+    public void populate(NamingEnumeration<SearchResult> userAttributeEnumeration)
+            throws NamingException {
+        while (userAttributeEnumeration.hasMore()) {
+            SearchResult result = userAttributeEnumeration.next();
+            NamingEnumeration attrs = result.getAttributes().getAll();
+            while (attrs.hasMore()) {
+                Attribute attr = (Attribute)attrs.next();
+                if ("memberOf".equals(attr.getID())) {
+                    LOG.debug("{}", attr);
+                    groups = getAtrributeValues(attr.getAll());
+                }
+            }
+        }
+    }
+
+    /**
+     * Extract attribute values.
+     *
+     * Note: This method extract the value of CN=
+     *
+     * @param attrValues
+     * @return
+     * @throws NamingException
+     */
+    private Collection<String> getAtrributeValues(NamingEnumeration attrValues) throws NamingException {
+        List<String> valueList = new ArrayList<String>();
+        while (attrValues.hasMoreElements()) {
+            String attrValue = (String)attrValues.next();
+            LOG.debug("Processing {}", attrValue);
+            if (!attrValue.isEmpty()) {
+                valueList.add(attrValue.substring(3, attrValue.indexOf(",")));
+            }
+        }
+        return valueList;
+    }
+
+    /**
+     * Returns userName
+     * @return the userName
+     */
+    public String getUserName() {
+        return userName;
+    }
+
+    /**
+     * Returns groups
+     * @return the groups
+     */
+    public Collection<String> getGroups() {
+        return groups;
+    }
+
 }

@@ -22,15 +22,15 @@ import org.sonar.api.security.UserDetails;
 
 /**
  * UserDetails provider.
- * 
+ *
  * @author Jiji_Sasidharan
  */
 public class ADUsersProvider extends ExternalUsersProvider {
-    
+
     private static final Logger LOG = LoggerFactory.getLogger(ADUsersProvider.class);
 
     public ADUsersProvider(ADSettings adSettings) {
-        //we might use ADSetting in future 
+        //we might use ADSetting in future
     }
 
     /**

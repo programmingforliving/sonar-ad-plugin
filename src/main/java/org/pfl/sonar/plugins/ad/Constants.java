@@ -17,23 +17,23 @@ package org.pfl.sonar.plugins.ad;
 
 /**
  * Constants - List out all the constants used in the plugin
- * 
+ *
  * @author Jiji_Sasidharan
  */
 public interface Constants {
 
     public String SECURITY_REALM_NAME = "AD";
-    
+
     public String PROVIDER_URL            = "java.naming.provider.url";
     public String FACTORY_INITIAL         = "java.naming.factory.initial";
     public String SECURITY_AUTHENTICATION = "java.naming.security.authentication";
     public String SECURITY_PRINCIPAL      = "java.naming.security.principal";
     public String SECURITY_CREDENTIALS    = "java.naming.security.credentials";
     public String REFERRAL                = "java.naming.referral";
-    
+
     public String LDAP_CTX_FACTORY               = "com.sun.jndi.ldap.LdapCtxFactory";
     public String SECURITY_AUTHENTICATION_SIMPLE = "simple";
     public String REFERRAL_FOLLOW                = "follow";
-    
+
     public String CONFIG_OVERRIDE_AD_DOMAIN = "sonar.ad.domain";
 }

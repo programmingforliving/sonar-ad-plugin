@@ -56,199 +56,198 @@ import org.sonar.api.config.Settings;
 @RunWith(PowerMockRunner.class)
 @PrepareForTest({ADSettings.class, InetAddress.class})
 public class ADSettingsTest {
-	
-	@Rule
-	private ExpectedException thrown = ExpectedException.none(); 
-	
-	/**
-	 * Setup necessary mock objects/stubs for InitialDirContext and the InitialDirContext.getAttributes.
-	 * 
-	 * @param domain
-	 * @param providers
-	 * @throws Exception
-	 */
-	@SuppressWarnings("unchecked")
-	protected void setupMocks(String domain, final List<String> providers) throws Exception {
-		InitialDirContext dirCtx = mock(InitialDirContext.class);
-		whenNew(InitialDirContext.class).withNoArguments().thenReturn(dirCtx);
-		
-		Attributes attributes = mock(Attributes.class);
-		String searchStr = "dns:/_ldap._tcp." + (domain == null ? "" : domain);
-		when(dirCtx.getAttributes(startsWith(searchStr), aryEq(new String[]{"srv"}))).thenReturn(attributes);
-		when(dirCtx.getAttributes(not(startsWith(searchStr)), aryEq(new String[]{"srv"}))).thenReturn(null);
 
-		final NamingEnumeration<Attribute> attrEnum = mock(NamingEnumeration.class);
-		when(attributes.getAll()).thenAnswer(new Answer<NamingEnumeration<Attribute>>() {
-			public NamingEnumeration<Attribute> answer(InvocationOnMock invocation)
-					throws Throwable {
-				return attrEnum;
-			}
-		});
+    @Rule
+    private ExpectedException thrown = ExpectedException.none();
 
-		if (providers == null || providers.isEmpty()) {
-			when(attrEnum.hasMore()).thenReturn(false);
-		} else {
-			final Iterator<String> providerIt = providers.iterator();
-			when(attrEnum.hasMore()).thenAnswer(new Answer<Boolean>() {
-				public Boolean answer(InvocationOnMock invocation)
-						throws Throwable {
-					return providerIt.hasNext();
-				}
-			});
-			
-			when(attrEnum.next()).thenAnswer(new Answer<Attribute>() {
-				public Attribute answer(InvocationOnMock invocation)
-						throws Throwable {
-					Attribute attr = mock(Attribute.class);
-					when(attr.get()).thenReturn(providerIt.next());
-					return attr;
-				}
-			});
-		}
-		
-		mockStatic(InetAddress.class);
-		InetAddress mockInetAddress = mock(InetAddress.class);
-		when(InetAddress.getLocalHost()).thenReturn(mockInetAddress);
-		when(mockInetAddress.getCanonicalHostName()).thenReturn("mycomp.users.mycompany.com");
+    /**
+     * Setup necessary mock objects/stubs for InitialDirContext and the InitialDirContext.getAttributes.
+     *
+     * @param domain
+     * @param providers
+     * @throws Exception
+     */
+    @SuppressWarnings("unchecked")
+    protected void setupMocks(String domain, final List<String> providers) throws Exception {
+        InitialDirContext dirCtx = mock(InitialDirContext.class);
+        whenNew(InitialDirContext.class).withNoArguments().thenReturn(dirCtx);
 
-	}
-	
-	/**
-	 * Scenario:
-	 *   a) Domain is provided in sonar.properties.
-	 *   b) No srv records available for the domain.  
-	 * @throws Exception
-	 */
-	@Test
-	public void testWithExternallyProvidedDomainWithNoProviders() throws Exception {
-		final String externallyProvidedDomain = "users.mycompany.com";
-		setupMocks(externallyProvidedDomain, null);
-		
-		thrown.expect(ADPluginException.class);
-		thrown.expectMessage(CoreMatchers.startsWith("Failed to retrieve srv records for"));
-		
-		Settings settings = new Settings();
-		settings.setProperty("sonar.ad.domain", externallyProvidedDomain);
-		new ADSettings(settings).load();;
-		// load should throw the ADPluginException
-		fail("ADPluginException is not thrown on the event of no providers ");
-	}
-	
-	/**
-	 * Scenario:
-	 *   a) Domain is provided in sonar.properties.
-	 *   b) one srv records available for the domain.  
-	 * @throws Exception
-	 */
-	@Test 
-	public void testWithExternallyProvidedDomainWithProviders1() throws Exception {
-		final String externallyProvidedDomain = "users.mycompany.com";
-		final String externallyProvidedDomainDN = "DC=users,DC=mycompany,DC=com";
-		setupMocks(externallyProvidedDomain, Arrays.asList("0 100 389 ldap.mycompany.com"));
-		
-		Settings settings = new Settings();
-		settings.setProperty("sonar.ad.domain", externallyProvidedDomain);
-		ADSettings adSettings = new ADSettings(settings);
-		adSettings.load();
-		
-		assertEquals("fetchProviderList failed.", adSettings.getProviderList().size(), 1);
-		Iterator<ADServerEntry> providers = adSettings.getProviderList().iterator();
-		assertEquals("fetchProviderList failed.", providers.next(), new ADServerEntry(0, 100, "ldap.mycompany.com", 389));
-		assertEquals("Domain identifcation failed.", adSettings.getDnsDomain(), externallyProvidedDomain);
-		assertEquals("DomainDN construction failed.", adSettings.getDnsDomainDN(), externallyProvidedDomainDN);
-	}
-	
-	/**
-	 * Scenario:
-	 *   a) Domain is provided in sonar.properties.
-	 *   b) two srv records available for the domain.  
-	 * @throws Exception
-	 */
-	@Test 
-	public void testWithExternallyProvidedDomainWithProviders2() throws Exception {
-		final String externallyProvidedDomain = "users.mycompany.com";
-		final String externallyProvidedDomainDN = "DC=users,DC=mycompany,DC=com";
-		setupMocks(externallyProvidedDomain, Arrays.asList("0 1 389 ldap1.mycompany.com", "1 1 389 ldap2.mycompany.com"));
-		
-		Settings settings = new Settings();
-		settings.setProperty("sonar.ad.domain", externallyProvidedDomain);
-		ADSettings adSettings = new ADSettings(settings);
-		adSettings.load();
-		
-		assertEquals("fetchProviderList failed.", adSettings.getProviderList().size(), 2);
-		Iterator<ADServerEntry> providers = adSettings.getProviderList().iterator();
-		assertEquals("fetchProviderList order failed.", providers.next(), new ADServerEntry(0,  1, "ldap1.mycompany.com", 389));
-		assertEquals("fetchProviderList order failed.", providers.next(), new ADServerEntry(1,  1, "ldap2.mycompany.com", 389));
-		assertEquals("Domain identifcation failed.", adSettings.getDnsDomain(), externallyProvidedDomain);
-		assertEquals("DomainDN construction failed.", adSettings.getDnsDomainDN(), externallyProvidedDomainDN);
-	}
+        Attributes attributes = mock(Attributes.class);
+        String searchStr = "dns:/_ldap._tcp." + (domain == null ? "" : domain);
+        when(dirCtx.getAttributes(startsWith(searchStr), aryEq(new String[]{"srv"}))).thenReturn(attributes);
+        when(dirCtx.getAttributes(not(startsWith(searchStr)), aryEq(new String[]{"srv"}))).thenReturn(null);
 
-	/**
-	 * Scenario:
-	 *   a) auto-discovery of domain.
-	 *   b) two srv records available for the domain.  
-	 * @throws Exception
-	 */
-	@Test 
-	public void testAutoDiscoveryWithProviders() throws Exception {
-		String hostName = "mycomp.users.mycompany.com";
-		String domainName = hostName.substring(hostName.indexOf('.') + 1);
-		String domainNameDN = "DC=" + domainName.replace(".", ",DC=");
-		setupMocks(domainName, Arrays.asList("0 1 389 ldap1.mycompany.com", "1 1 389 ldap2.mycompany.com"));
+        final NamingEnumeration<Attribute> attrEnum = mock(NamingEnumeration.class);
+        when(attributes.getAll()).thenAnswer(new Answer<NamingEnumeration<Attribute>>() {
+            public NamingEnumeration<Attribute> answer(InvocationOnMock invocation)
+                    throws Throwable {
+                return attrEnum;
+            }
+        });
 
-		ADSettings adSettings = new ADSettings(new Settings());
-		adSettings.load();
+        if (providers == null || providers.isEmpty()) {
+            when(attrEnum.hasMore()).thenReturn(false);
+        } else {
+            final Iterator<String> providerIt = providers.iterator();
+            when(attrEnum.hasMore()).thenAnswer(new Answer<Boolean>() {
+                public Boolean answer(InvocationOnMock invocation)
+                        throws Throwable {
+                    return providerIt.hasNext();
+                }
+            });
 
-		assertEquals("fetchProviderList failed.", adSettings.getProviderList().size(), 2);
-		Iterator<ADServerEntry> providers = adSettings.getProviderList().iterator();
-		assertEquals("fetchProviderList order failed.", providers.next(), new ADServerEntry(0,  1, "ldap1.mycompany.com", 389));
-		assertEquals("fetchProviderList order failed.", providers.next(), new ADServerEntry(1,  1, "ldap2.mycompany.com", 389));
-		assertEquals("Domain identifcation failed.", adSettings.getDnsDomain(), domainName);
-		assertEquals("DomainDN construction failed.", adSettings.getDnsDomainDN(), domainNameDN);
-	}
+            when(attrEnum.next()).thenAnswer(new Answer<Attribute>() {
+                public Attribute answer(InvocationOnMock invocation)
+                        throws Throwable {
+                    Attribute attr = mock(Attribute.class);
+                    when(attr.get()).thenReturn(providerIt.next());
+                    return attr;
+                }
+            });
+        }
 
-	/**
-	 * Scenario:
-	 *   a) auto-discovery of domain.
-	 *   b) No srv records available for the domain.  
-	 * @throws Exception
-	 */
-	@Test
-	public void testAutoDiscoveryWithNoProviders() throws Exception {
-		setupMocks(null, null);
+        mockStatic(InetAddress.class);
+        InetAddress mockInetAddress = mock(InetAddress.class);
+        when(InetAddress.getLocalHost()).thenReturn(mockInetAddress);
+        when(mockInetAddress.getCanonicalHostName()).thenReturn("mycomp.users.mycompany.com");
+    }
 
-		thrown.expect(ADPluginException.class);
-		thrown.expectMessage(CoreMatchers.startsWith("Failed to retrieve srv records for"));
-		
-		new ADSettings(new Settings()).load();
-		fail("ADPluginException is not thrown on the event of no providers ");
-	}
+    /**
+     * Scenario:
+     *   a) Domain is provided in sonar.properties.
+     *   b) No srv records available for the domain.
+     * @throws Exception
+     */
+    @Test
+    public void testWithExternallyProvidedDomainWithNoProviders() throws Exception {
+        final String externallyProvidedDomain = "users.mycompany.com";
+        setupMocks(externallyProvidedDomain, null);
 
-	/**
-	 * Scenario:
-	 *   a) auto-discovery of domain.
-	 *   b) No srv records available for the domain.
-	 *   c) two srv records available for sub domain  
-	 * @throws Exception
-	 */
-	@Test 
-	public void testSubdomainAutoDiscoveryWithProviders() throws Exception {
-		String hostName = "mycomp.users.mycompany.com";
-		String domainName = hostName.substring(hostName.indexOf('.') + 1);
-		String domainNameDN = "DC=" + domainName.replace(".", ",DC=");
-		String subDomainName = domainName.substring(domainName.indexOf('.') + 1);
-		String subDomainNameDN = "DC=" + subDomainName.replace(".", ",DC=");
-		setupMocks(subDomainName, Arrays.asList("0 1 389 ldap1.mycompany.com", "1 1 389 ldap2.mycompany.com"));
-		
-		ADSettings adSettings = new ADSettings(new Settings());
-		adSettings.load();
+        thrown.expect(ADPluginException.class);
+        thrown.expectMessage(CoreMatchers.startsWith("Failed to retrieve srv records for"));
 
-		assertEquals("SubDomain fetchProviderList failed.", adSettings.getProviderList().size(), 2);
-		Iterator<ADServerEntry> providers = adSettings.getProviderList().iterator();
-		assertEquals("SubDomain fetchProviderList order failed.", providers.next(), new ADServerEntry(0,  1, "ldap1.mycompany.com", 389));
-		assertEquals("SubDomain fetchProviderList order failed.", providers.next(), new ADServerEntry(1,  1, "ldap2.mycompany.com", 389));
-		assertEquals("SubDomain search failed.", adSettings.getDnsDomain(), subDomainName);
-		assertEquals("SubDomainDN construction failed.", adSettings.getDnsDomainDN(), subDomainNameDN);
-		assertNotSame("SubDomainDN construction failed.", adSettings.getDnsDomainDN(), domainNameDN);
-	}
+        Settings settings = new Settings();
+        settings.setProperty("sonar.ad.domain", externallyProvidedDomain);
+        new ADSettings(settings).load();;
+        // load should throw the ADPluginException
+        fail("ADPluginException is not thrown on the event of no providers ");
+    }
+
+    /**
+     * Scenario:
+     *   a) Domain is provided in sonar.properties.
+     *   b) one srv records available for the domain.
+     * @throws Exception
+     */
+    @Test
+    public void testWithExternallyProvidedDomainWithProviders1() throws Exception {
+        final String externallyProvidedDomain = "users.mycompany.com";
+        final String externallyProvidedDomainDN = "DC=users,DC=mycompany,DC=com";
+        setupMocks(externallyProvidedDomain, Arrays.asList("0 100 389 ldap.mycompany.com"));
+
+        Settings settings = new Settings();
+        settings.setProperty("sonar.ad.domain", externallyProvidedDomain);
+        ADSettings adSettings = new ADSettings(settings);
+        adSettings.load();
+
+        assertEquals("fetchProviderList failed.", adSettings.getProviderList().size(), 1);
+        Iterator<ADServerEntry> providers = adSettings.getProviderList().iterator();
+        assertEquals("fetchProviderList failed.", providers.next(), new ADServerEntry(0, 100, "ldap.mycompany.com", 389));
+        assertEquals("Domain identifcation failed.", adSettings.getDnsDomain(), externallyProvidedDomain);
+        assertEquals("DomainDN construction failed.", adSettings.getDnsDomainDN(), externallyProvidedDomainDN);
+    }
+
+    /**
+     * Scenario:
+     *   a) Domain is provided in sonar.properties.
+     *   b) two srv records available for the domain.
+     * @throws Exception
+     */
+    @Test
+    public void testWithExternallyProvidedDomainWithProviders2() throws Exception {
+        final String externallyProvidedDomain = "users.mycompany.com";
+        final String externallyProvidedDomainDN = "DC=users,DC=mycompany,DC=com";
+        setupMocks(externallyProvidedDomain, Arrays.asList("0 1 389 ldap1.mycompany.com", "1 1 389 ldap2.mycompany.com"));
+
+        Settings settings = new Settings();
+        settings.setProperty("sonar.ad.domain", externallyProvidedDomain);
+        ADSettings adSettings = new ADSettings(settings);
+        adSettings.load();
+
+        assertEquals("fetchProviderList failed.", adSettings.getProviderList().size(), 2);
+        Iterator<ADServerEntry> providers = adSettings.getProviderList().iterator();
+        assertEquals("fetchProviderList order failed.", providers.next(), new ADServerEntry(0,  1, "ldap1.mycompany.com", 389));
+        assertEquals("fetchProviderList order failed.", providers.next(), new ADServerEntry(1,  1, "ldap2.mycompany.com", 389));
+        assertEquals("Domain identifcation failed.", adSettings.getDnsDomain(), externallyProvidedDomain);
+        assertEquals("DomainDN construction failed.", adSettings.getDnsDomainDN(), externallyProvidedDomainDN);
+    }
+
+    /**
+     * Scenario:
+     *   a) auto-discovery of domain.
+     *   b) two srv records available for the domain.
+     * @throws Exception
+     */
+    @Test
+    public void testAutoDiscoveryWithProviders() throws Exception {
+        String hostName = "mycomp.users.mycompany.com";
+        String domainName = hostName.substring(hostName.indexOf('.') + 1);
+        String domainNameDN = "DC=" + domainName.replace(".", ",DC=");
+        setupMocks(domainName, Arrays.asList("0 1 389 ldap1.mycompany.com", "1 1 389 ldap2.mycompany.com"));
+
+        ADSettings adSettings = new ADSettings(new Settings());
+        adSettings.load();
+
+        assertEquals("fetchProviderList failed.", adSettings.getProviderList().size(), 2);
+        Iterator<ADServerEntry> providers = adSettings.getProviderList().iterator();
+        assertEquals("fetchProviderList order failed.", providers.next(), new ADServerEntry(0,  1, "ldap1.mycompany.com", 389));
+        assertEquals("fetchProviderList order failed.", providers.next(), new ADServerEntry(1,  1, "ldap2.mycompany.com", 389));
+        assertEquals("Domain identifcation failed.", adSettings.getDnsDomain(), domainName);
+        assertEquals("DomainDN construction failed.", adSettings.getDnsDomainDN(), domainNameDN);
+    }
+
+    /**
+     * Scenario:
+     *   a) auto-discovery of domain.
+     *   b) No srv records available for the domain.
+     * @throws Exception
+     */
+    @Test
+    public void testAutoDiscoveryWithNoProviders() throws Exception {
+        setupMocks(null, null);
+
+        thrown.expect(ADPluginException.class);
+        thrown.expectMessage(CoreMatchers.startsWith("Failed to retrieve srv records for"));
+
+        new ADSettings(new Settings()).load();
+        fail("ADPluginException is not thrown on the event of no providers ");
+    }
+
+    /**
+     * Scenario:
+     *   a) auto-discovery of domain.
+     *   b) No srv records available for the domain.
+     *   c) two srv records available for sub domain
+     * @throws Exception
+     */
+    @Test
+    public void testSubdomainAutoDiscoveryWithProviders() throws Exception {
+        String hostName = "mycomp.users.mycompany.com";
+        String domainName = hostName.substring(hostName.indexOf('.') + 1);
+        String domainNameDN = "DC=" + domainName.replace(".", ",DC=");
+        String subDomainName = domainName.substring(domainName.indexOf('.') + 1);
+        String subDomainNameDN = "DC=" + subDomainName.replace(".", ",DC=");
+        setupMocks(subDomainName, Arrays.asList("0 1 389 ldap1.mycompany.com", "1 1 389 ldap2.mycompany.com"));
+
+        ADSettings adSettings = new ADSettings(new Settings());
+        adSettings.load();
+
+        assertEquals("SubDomain fetchProviderList failed.", adSettings.getProviderList().size(), 2);
+        Iterator<ADServerEntry> providers = adSettings.getProviderList().iterator();
+        assertEquals("SubDomain fetchProviderList order failed.", providers.next(), new ADServerEntry(0,  1, "ldap1.mycompany.com", 389));
+        assertEquals("SubDomain fetchProviderList order failed.", providers.next(), new ADServerEntry(1,  1, "ldap2.mycompany.com", 389));
+        assertEquals("SubDomain search failed.", adSettings.getDnsDomain(), subDomainName);
+        assertEquals("SubDomainDN construction failed.", adSettings.getDnsDomainDN(), subDomainNameDN);
+        assertNotSame("SubDomainDN construction failed.", adSettings.getDnsDomainDN(), domainNameDN);
+    }
 }

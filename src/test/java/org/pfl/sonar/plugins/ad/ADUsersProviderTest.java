@@ -29,35 +29,35 @@ import org.sonar.api.security.UserDetails;
 
 /**
  * Testcase for {@link ADUsersProvider}
- * 
+ *
  * @author Jiji Sasidharan
  */
 @RunWith(PowerMockRunner.class)
 @PrepareForTest({ADUsersProvider.class})
 public class ADUsersProviderTest {
 
-	/**
-	 * Scenario:
-	 *   a) The default Sonar admin user 'admin' query should return null.
-	 */
-	@Test
-	public void testAdmin() {
-		ADUsersProvider adUsersProvider = new ADUsersProvider(null);
-		UserDetails user = adUsersProvider.doGetUserDetails(new Context("admin", mock(HttpServletRequest.class)));
-		assertNull("Default user(admin) check failed", user);
-	}
-	
-	/**
-	 * Scenario:
-	 *   a) Any non default user query should return.
-	 */
-	@Test
-	public void testAnyUserOtherThanAdmin() {
-		String userName = "user";
-		ADUsersProvider adUsersProvider = new ADUsersProvider(null);
-		UserDetails user = adUsersProvider.doGetUserDetails(new Context(userName, mock(HttpServletRequest.class)));
-		assertNotNull("Non default user query failed", user);
-		assertEquals("User name deosn't match", user.getName(), userName);
-		assertEquals("Wrong email address", user.getEmail(), "");
-	}
+    /**
+     * Scenario:
+     *   a) The default Sonar admin user 'admin' query should return null.
+     */
+    @Test
+    public void testAdmin() {
+        ADUsersProvider adUsersProvider = new ADUsersProvider(null);
+        UserDetails user = adUsersProvider.doGetUserDetails(new Context("admin", mock(HttpServletRequest.class)));
+        assertNull("Default user(admin) check failed", user);
+    }
+
+    /**
+     * Scenario:
+     *   a) Any non default user query should return.
+     */
+    @Test
+    public void testAnyUserOtherThanAdmin() {
+        String userName = "user";
+        ADUsersProvider adUsersProvider = new ADUsersProvider(null);
+        UserDetails user = adUsersProvider.doGetUserDetails(new Context(userName, mock(HttpServletRequest.class)));
+        assertNotNull("Non default user query failed", user);
+        assertEquals("User name deosn't match", user.getName(), userName);
+        assertEquals("Wrong email address", user.getEmail(), "");
+    }
 }

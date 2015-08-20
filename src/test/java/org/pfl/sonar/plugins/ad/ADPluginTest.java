@@ -24,21 +24,21 @@ import org.junit.Test;
 
 /**
  * Test case for {@link ADPlugin}
- * 
+ *
  * @author Jiji Sasidharan
  */
 public class ADPluginTest {
 
-	/**
-	 * Check the plugin is configured properly.
-	 */
-	@SuppressWarnings("rawtypes")
-	@Test
-	public void testExtensionList() {
-		List extensionList = new ADPlugin().getExtensions();
-		assertNotNull("Plugin Extension list shouldn't be null", extensionList);
-		assertEquals("Plugin extensions size is not 2", extensionList.size(), 2);
-		assertEquals("First element in plugin extension is not ADSecurityRealm", extensionList.get(0), ADSecurityRealm.class);
-		assertEquals("Second element in plugin extension is not ADSettings", extensionList.get(1), ADSettings.class);
-	}
+    /**
+     * Check the plugin is configured properly.
+     */
+    @SuppressWarnings("rawtypes")
+    @Test
+    public void testExtensionList() {
+        List extensionList = new ADPlugin().getExtensions();
+        assertNotNull("Plugin Extension list shouldn't be null", extensionList);
+        assertEquals("Plugin extensions size is not 2", extensionList.size(), 2);
+        assertEquals("First element in plugin extension is not ADSecurityRealm", extensionList.get(0), ADSecurityRealm.class);
+        assertEquals("Second element in plugin extension is not ADSettings", extensionList.get(1), ADSettings.class);
+    }
 }
