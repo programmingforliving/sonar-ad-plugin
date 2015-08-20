@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.pfl</groupId>
 	<artifactId>sonar-ad-plugin</artifactId>
-	<version>0.5</version>
+	<version>0.6</version>
 	<packaging>jar</packaging>
 	<name>Sonar AD Plugin</name>
 	<licenses>
