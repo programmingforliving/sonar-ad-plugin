@@ -44,6 +44,7 @@ public class ADServerEntry implements Comparable<ADServerEntry> {
     /**
      * compareTo
      */
+    @Override
     public int compareTo(ADServerEntry o) {
         if (this.priority == o.priority) {
             if (this.weight == o.weight) {
@@ -94,9 +95,11 @@ public class ADServerEntry implements Comparable<ADServerEntry> {
     public String getUrl() {
         return "ldap://" + host + ":" + port;
     }
+
     /**
      * Return the string representation of ADServerEntry object.
      */
+    @Override
     public String toString() {
         return "("+ priority +"-" + weight+ ")" + getUrl();
     }

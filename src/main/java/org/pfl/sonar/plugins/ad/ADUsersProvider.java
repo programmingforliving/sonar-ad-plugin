@@ -36,6 +36,7 @@ public class ADUsersProvider extends ExternalUsersProvider {
     /**
      * Returns the UserDetails.
      */
+    @Override
     public UserDetails doGetUserDetails(Context context) {
         LOG.debug("Retrieving the user details for '{}'", context.getUsername());
         UserDetails userDetails = null;

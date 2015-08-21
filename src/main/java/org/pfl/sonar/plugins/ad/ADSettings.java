@@ -83,10 +83,10 @@ public class ADSettings implements ServerExtension {
      */
     protected void doAutoDiscovery() {
         try {
-            Set<ADServerEntry> providerList = null;
+            Set<ADServerEntry> authProviderList = null;
             String hostName = null;
             String adDomain = getDnsDomain();
-            boolean domainNotProvided = (adDomain == null || adDomain.isEmpty());
+            boolean domainNotProvided = adDomain == null || adDomain.isEmpty();
             if (domainNotProvided) {
                 hostName = InetAddress.getLocalHost().getCanonicalHostName();
                 LOG.trace("Host Name: {}", hostName);
@@ -95,28 +95,28 @@ public class ADSettings implements ServerExtension {
                     adDomain = hostName.substring(index + 1);
                     try {
                         LOG.trace("Searching provider list for domain '{}'", adDomain);
-                        providerList = fetchProviderList(adDomain);
-                        if (providerList != null && providerList.size() > 0) {
+                        authProviderList = fetchProviderList(adDomain);
+                        if (authProviderList != null && !authProviderList.isEmpty()) {
                             break;
                         }
                     } catch (Exception e) {
-                        LOG.warn("Coulnt find any providers for domain '{}", adDomain);
+                        LOG.warn("Couldn't find any providers for domain '{}'. Error: ", adDomain, e.getMessage());
                     }
                 }
             } else {
-                providerList = fetchProviderList(adDomain);
+                authProviderList = fetchProviderList(adDomain);
             }
 
-            if (providerList == null || providerList.isEmpty()) {
+            if (authProviderList == null || authProviderList.isEmpty()) {
                 LOG.error("Autodiscovery couldn't find any srv records for {}",
-                        (domainNotProvided ? hostName : adDomain));
+                        domainNotProvided ? hostName : adDomain);
                 throw new ADPluginException("Failed to retrieve srv records for " +
                         (domainNotProvided ? hostName : adDomain));
             }
 
             setDnsDomain(adDomain);
             setDnsDomainDN("DC=" + adDomain.replace(".", ",DC="));
-            setProviderList(providerList);
+            setProviderList(authProviderList);
         } catch (UnknownHostException e) {
             LOG.error("Failed to detect domain. Error: {}", e.getMessage());
             throw new ADPluginException("Failed to detect the domain ", e);
@@ -135,7 +135,7 @@ public class ADSettings implements ServerExtension {
      */
     protected Set<ADServerEntry> fetchProviderList(String domainName) {
         // find provider list.
-        Set<ADServerEntry> providerList = new TreeSet<ADServerEntry>();
+        Set<ADServerEntry> authProviderList = new TreeSet<ADServerEntry>();
         try {
             DirContext dirContext = new InitialDirContext();
             Attributes srvAttrs = dirContext.getAttributes("dns:/_ldap._tcp." + domainName, new String[] { "srv" });
@@ -153,14 +153,14 @@ public class ADSettings implements ServerExtension {
                         Integer.valueOf(srvRecordTokens[1]),
                         host,
                         Integer.valueOf(srvRecordTokens[2]));
-                providerList.add(adServer);
+                authProviderList.add(adServer);
             }
-            LOG.debug("Provider List: {}", providerList);
+            LOG.debug("Provider List: {}", authProviderList);
         } catch (NamingException e) {
             LOG.error("Failed to retrieve src records for domain: '{}'. Error: {}", domainName, e.getMessage());
             throw new ADPluginException("Failed to retrieve src records for domain: " + domainName, e);
         }
-        return providerList;
+        return authProviderList;
     }
 
     /**

@@ -46,6 +46,7 @@ public class ADSecurityRealm extends SecurityRealm {
      * @return SecurityRealm name
      * @see Constants#SECURITY_REALM_NAME
      */
+    @Override
     public String getName() {
         return Constants.SECURITY_REALM_NAME;
     }
@@ -53,6 +54,7 @@ public class ADSecurityRealm extends SecurityRealm {
     /**
      * Initialize the AD Security Realm.
      */
+    @Override
     public void init() {
         adSettings.load();
         LOG.info("ADSecurityRealm initialized successfully.");
@@ -63,6 +65,7 @@ public class ADSecurityRealm extends SecurityRealm {
      *
      * @return {@link Authenticator} implementation associated with this realm
      */
+    @Override
     public Authenticator doGetAuthenticator() {
         return new ADAuthenticator(adSettings);
     }
@@ -73,6 +76,7 @@ public class ADSecurityRealm extends SecurityRealm {
      * @return {@link ExternalUsersProvider} associated with this realm, null
      *         if not supported
      */
+    @Override
     public ExternalUsersProvider getUsersProvider() {
         return new ADUsersProvider(adSettings);
     }
@@ -83,6 +87,7 @@ public class ADSecurityRealm extends SecurityRealm {
      * @return {@link ExternalGroupsProvider} associated with this realm, null
      *         if not supported
      */
+    @Override
     public ExternalGroupsProvider getGroupsProvider() {
         return new ADGroupsProvider(adSettings);
     }

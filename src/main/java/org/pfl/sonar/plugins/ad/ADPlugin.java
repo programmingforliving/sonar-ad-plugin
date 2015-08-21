@@ -38,6 +38,7 @@ public class ADPlugin extends SonarPlugin {
      *
      * @see org.sonar.api.Plugin#getExtensions()
      */
+    @Override
     public List getExtensions() {
         List extensionList = new ArrayList();
         extensionList.add(ADSecurityRealm.class);

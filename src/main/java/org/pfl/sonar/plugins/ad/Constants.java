@@ -20,20 +20,20 @@ package org.pfl.sonar.plugins.ad;
  *
  * @author Jiji_Sasidharan
  */
-public interface Constants {
+public final class Constants {
 
-    public String SECURITY_REALM_NAME = "AD";
+    public static final String SECURITY_REALM_NAME = "AD";
 
-    public String PROVIDER_URL            = "java.naming.provider.url";
-    public String FACTORY_INITIAL         = "java.naming.factory.initial";
-    public String SECURITY_AUTHENTICATION = "java.naming.security.authentication";
-    public String SECURITY_PRINCIPAL      = "java.naming.security.principal";
-    public String SECURITY_CREDENTIALS    = "java.naming.security.credentials";
-    public String REFERRAL                = "java.naming.referral";
+    public static final String PROVIDER_URL            = "java.naming.provider.url";
+    public static final String FACTORY_INITIAL         = "java.naming.factory.initial";
+    public static final String SECURITY_AUTHENTICATION = "java.naming.security.authentication";
+    public static final String SECURITY_PRINCIPAL      = "java.naming.security.principal";
+    public static final String SECURITY_CREDENTIALS    = "java.naming.security.credentials";
+    public static final String REFERRAL                = "java.naming.referral";
 
-    public String LDAP_CTX_FACTORY               = "com.sun.jndi.ldap.LdapCtxFactory";
-    public String SECURITY_AUTHENTICATION_SIMPLE = "simple";
-    public String REFERRAL_FOLLOW                = "follow";
+    public static final String LDAP_CTX_FACTORY               = "com.sun.jndi.ldap.LdapCtxFactory";
+    public static final String SECURITY_AUTHENTICATION_SIMPLE = "simple";
+    public static final String REFERRAL_FOLLOW                = "follow";
 
-    public String CONFIG_OVERRIDE_AD_DOMAIN = "sonar.ad.domain";
+    public static final String CONFIG_OVERRIDE_AD_DOMAIN = "sonar.ad.domain";
 }
