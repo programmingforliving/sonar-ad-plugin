@@ -14,6 +14,7 @@ Please refer the [Sonar AD Plugin documentation](http://programmingforliving.git
 
 History
 -------
+*  0.6  Fix for [Issue](https://github.com/programmingforliving/sonar-ad-plugin/issues/9), minor refactoring
 *  0.5  Minor defect fixes, documentation moved to github pages
 *  0.4  Changes to retrieve the groups of the logged in user
 *  0.3  Changes to [define AD Domain manually] (https://github.com/programmingforliving/sonar-ad-plugin/pull/2) - Credits to [Sergey Timanin](https://github.com/timanin)

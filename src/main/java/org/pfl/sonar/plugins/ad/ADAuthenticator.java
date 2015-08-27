@@ -47,13 +47,28 @@ public class ADAuthenticator extends Authenticator {
      */
     @Override
     public boolean doAuthenticate(Context context) {
+        boolean isAuthenticated = false;
         String userName = context.getUsername();
         String password = context.getPassword();
-        LOG.trace("adSettings: {}", adSettings);
-        DirContext dirCtx = ContextUtil.open(adSettings, userName, password);
-        boolean isAuthenticated = dirCtx != null;
-        LOG.debug("User '{}' authenticated? - {}", userName, isAuthenticated);
-        ContextUtil.close(dirCtx);
+        if (isEmpty(userName) || isEmpty(password)) {
+            LOG.error("User name and/or password is empty. user name: {}", userName);
+        } else {
+            LOG.trace("adSettings: {}", adSettings);
+            DirContext dirCtx = ContextUtil.open(adSettings, userName, password);
+            isAuthenticated = dirCtx != null;
+            LOG.debug("User '{}' authenticated? - {}", userName, isAuthenticated);
+            ContextUtil.close(dirCtx);
+        }
         return isAuthenticated;
+    }
+
+    /**
+     * Check if a given string value is null or empty.
+     *
+     * @param data
+     * @return
+     */
+    private boolean isEmpty(String data) {
+        return data == null || data.trim().isEmpty();
     }
 }
