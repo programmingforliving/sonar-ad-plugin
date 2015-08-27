@@ -150,4 +150,80 @@ public class ADAuthenticatorTest {
         assertTrue(!logged);
         assertNull(ContextUtil.getLoggedInUser());
     }
+
+    /**
+     * Scenario:
+     *   1) Empty password
+     * @throws Exception
+     */
+    @Test
+    public void testDoAuthenticateWithEmptyPassword() throws Exception {
+        String domainName = "ad.mycompany.com";
+        String userName = "user", password = "secret";
+
+        ADSecurityRealm adSecurityRealm = getMock(domainName, userName, password);
+        Authenticator authenticator = adSecurityRealm.doGetAuthenticator();
+        assertEquals(authenticator.getClass(), ADAuthenticator.class);
+
+        boolean logged = authenticator.doAuthenticate(new Context(userName, "", mock(HttpServletRequest.class)));
+        assertTrue(!logged);
+        assertNull(ContextUtil.getLoggedInUser());
+    }
+
+    /**
+     * Scenario:
+     *   1) Empty user name
+     * @throws Exception
+     */
+    @Test
+    public void testDoAuthenticateWithEmptyUserName() throws Exception {
+        String domainName = "ad.mycompany.com";
+        String userName = "user", password = "secret";
+
+        ADSecurityRealm adSecurityRealm = getMock(domainName, userName, password);
+        Authenticator authenticator = adSecurityRealm.doGetAuthenticator();
+        assertEquals(authenticator.getClass(), ADAuthenticator.class);
+
+        boolean logged = authenticator.doAuthenticate(new Context("", password, mock(HttpServletRequest.class)));
+        assertTrue(!logged);
+        assertNull(ContextUtil.getLoggedInUser());
+    }
+
+    /**
+     * Scenario:
+     *   1) Null password
+     * @throws Exception
+     */
+    @Test
+    public void testDoAuthenticateWithNullPassword() throws Exception {
+        String domainName = "ad.mycompany.com";
+        String userName = "user", password = "secret";
+
+        ADSecurityRealm adSecurityRealm = getMock(domainName, userName, password);
+        Authenticator authenticator = adSecurityRealm.doGetAuthenticator();
+        assertEquals(authenticator.getClass(), ADAuthenticator.class);
+
+        boolean logged = authenticator.doAuthenticate(new Context(userName, null, mock(HttpServletRequest.class)));
+        assertTrue(!logged);
+        assertNull(ContextUtil.getLoggedInUser());
+    }
+
+    /**
+     * Scenario:
+     *   1) Null user name
+     * @throws Exception
+     */
+    @Test
+    public void testDoAuthenticateWithNullUserName() throws Exception {
+        String domainName = "ad.mycompany.com";
+        String userName = "user", password = "secret";
+
+        ADSecurityRealm adSecurityRealm = getMock(domainName, userName, password);
+        Authenticator authenticator = adSecurityRealm.doGetAuthenticator();
+        assertEquals(authenticator.getClass(), ADAuthenticator.class);
+
+        boolean logged = authenticator.doAuthenticate(new Context(null, password, mock(HttpServletRequest.class)));
+        assertTrue(!logged);
+        assertNull(ContextUtil.getLoggedInUser());
+    }
 }
