@@ -19,4 +19,6 @@ git-ls-files --others --exclude-from=.git/info/exclude
 *.iml
 pom.xml.versionsBackup
 maven-eclipse.xml
-
+.DS_Store
+.sass-cache
+_site
