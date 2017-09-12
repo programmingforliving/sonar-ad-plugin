@@ -46,6 +46,6 @@ $on-mob:           600px;
 // Import partials from `sass_dir` (defaults to `_sass`)
 @import
         "base",
-        "layout",
-        "syntax-highlighting"
+        "syntax-highlighting",
+        "layout"
 ;
