@@ -5,7 +5,7 @@
     /*border-top: 5px solid $grey-color-dark;*/
     border-bottom: 1px solid darken($grey-color-light, 30%);
     min-height: 56px;
-    background-color: darken($grey-color-light, 5%);
+    background-color: darken($grey-color-light, 1%);
 
     // Positioning context for the mobile navigation icon
     position: relative;
@@ -19,7 +19,6 @@
     letter-spacing: -1px;
     margin-bottom: 0;
     float: left;
-    text-shadow: 0px 0px 8px lighten($text-color, 50%);
 
     &,
     &:visited {
@@ -41,25 +40,18 @@
     }
 
     .page-link {
-        color: lighten($text-color, 20%);
+        color: lighten($text-color, 35%);
         line-height: $base-line-height;
-        //font-weight: bold;
         font-size: 14px;
-
-        // Gaps between nav items, but not on the first one
-        &:not(:first-child) {
-            margin-left: 10px;
-        }
+        padding: 0px 2px;
 
         &:hover {
-           color: darken($text-color, 30%);
-           text-shadow: 0px 0px 5px lighten($text-color, 60%);
+           color: darken($text-color, 50%);
         }
     }
 
     .active {
-        color: darken($text-color, 60%);
-        text-shadow: 0px 0px 5px lighten($text-color, 20%);
+        color: darken($text-color, 100%);
     }
 
     @include media-query($on-palm) {

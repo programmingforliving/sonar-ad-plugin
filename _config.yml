@@ -11,7 +11,7 @@ markdown: kramdown
 highlighter: rouge
 
 pflurl: "http://programmingforliving.com"
-copyright: "Copyright 2014"
+copyright: "Copyright 2017"
 
 defaults:
   - 
